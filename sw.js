@@ -1,18 +1,57 @@
+
 // ════════════════════════════════════════
-//  NCDC Manager — Service Worker v10
+//  NCDC Manager — Service Worker v10 FCM
 // ════════════════════════════════════════
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+
 const CACHE_NAME = 'ncdc-manager-v10';
 
+// ── تهيئة Firebase في الخلفية ──
+firebase.initializeApp({
+  apiKey:            'AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo',
+  authDomain:        'ncdc-mail-a68ff.firebaseapp.com',
+  projectId:         'ncdc-mail-a68ff',
+  storageBucket:     'ncdc-mail-a68ff.firebasestorage.app',
+  messagingSenderId: '197299236308',
+  appId:             '1:197299236308:web:4205dd506cbc0148a53a41'
+});
+
+const messaging = firebase.messaging();
+
+// ── استقبال الإشعارات في الخلفية (التطبيق مغلق) ──
+messaging.onBackgroundMessage(payload => {
+  console.log('[SW] Background message:', payload);
+
+  const title = payload.notification?.title || 'NCDC — بريد جديد 📬';
+  const body  = payload.notification?.body  || 'وصلت مراسلة جديدة';
+  const data  = payload.data || {};
+
+  self.registration.showNotification(title, {
+    body,
+    icon:     './icon-192.png',
+    badge:    './icon-96.png',
+    tag:      data.tag || 'ncdc-mail',
+    renotify: true,
+    dir:      'rtl',
+    lang:     'ar',
+    vibrate:  [200, 100, 200],
+    data:     { url: './index.html' }
+  });
+});
+
+// ── Install ──
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
-      cache.addAll(['./index.html','./manifest.json','./icon-192.png','./icon-512.png'])
+      cache.addAll(['./index.html', './manifest.json', './icon-192.png', './icon-512.png'])
            .catch(e => console.warn('[SW] cache warn:', e))
     )
   );
   self.skipWaiting();
 });
 
+// ── Activate ──
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -22,12 +61,14 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
+// ── Fetch ──
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.hostname.includes('googleapis') ||
       url.hostname.includes('gstatic') ||
       url.hostname.includes('firestore') ||
-      url.hostname.includes('firebase')) return;
+      url.hostname.includes('firebase') ||
+      url.hostname.includes('fcm')) return;
 
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -42,27 +83,7 @@ self.addEventListener('fetch', event => {
   }
 });
 
-// ── Push Notification ──
-self.addEventListener('push', event => {
-  let data = { title: 'NCDC — لوحة المدير', body: 'وصل بريد جديد 📬', tag: 'ncdc' };
-  try { if (event.data) data = { ...data, ...event.data.json() }; }
-  catch(e) { if (event.data) data.body = event.data.text(); }
-
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body:     data.body,
-      icon:     './icon-192.png',
-      badge:    './icon-96.png',
-      tag:      data.tag || 'ncdc',
-      renotify: true,
-      dir:      'rtl',
-      lang:     'ar',
-      vibrate:  [200, 100, 200],
-      data:     { url: './index.html' }
-    })
-  );
-});
-
+// ── Notification Click ──
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
@@ -75,7 +96,7 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// ── رسائل من الصفحة ──
+// ── رسائل من الصفحة (fallback) ──
 self.addEventListener('message', event => {
   if (event.data?.type === 'SHOW_NOTIFICATION') {
     self.registration.showNotification(event.data.title || 'NCDC مدير', {
