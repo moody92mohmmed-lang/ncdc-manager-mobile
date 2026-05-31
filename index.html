@@ -2,290 +2,80 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>لوحة المدير للهاتف — NCDC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NCDC — تطبيق المدير للهاتف v8</title>
   <meta name="theme-color" content="#0f172a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="NCDC Manager" />
   <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:Tajawal,Arial,sans-serif}
-    :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:rgba(148,163,184,.18);--txt:#f8fafc;--mut:#94a3b8;--blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--violet:#8b5cf6}
-    body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:78px}
-    .hide{display:none!important}.wrap{max-width:720px;margin:0 auto;padding:14px}.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
-    .login{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 20px;box-shadow:0 16px 50px rgba(0,0,0,.25)}
-    .logo{width:62px;height:62px;border-radius:20px;background:rgba(59,130,246,.14);color:#93c5fd;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}.title{text-align:center;font-size:21px;font-weight:800}.sub{text-align:center;color:var(--mut);font-size:13px;margin-top:5px;line-height:1.6}.inp{width:100%;margin-top:18px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:16px;outline:none;text-align:center}.btn{width:100%;margin-top:12px;border:0;border-radius:14px;background:var(--blue);color:white;padding:13px;font-size:16px;font-weight:800;cursor:pointer}.err{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;text-align:center;font-size:13px}
+    :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:rgba(148,163,184,.2);--txt:#f8fafc;--mut:#94a3b8;--blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}
+    body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:78px}.hide{display:none!important}.wrap{max-width:720px;margin:0 auto;padding:14px}.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+    .login{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 20px;box-shadow:0 16px 50px rgba(0,0,0,.25)}.logo{width:62px;height:62px;border-radius:20px;background:rgba(59,130,246,.14);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}.title{text-align:center;font-size:21px;font-weight:800}.sub{text-align:center;color:var(--mut);font-size:13px;margin-top:5px;line-height:1.6}.inp{width:100%;margin-top:18px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:17px;outline:none;text-align:center}.btn{width:100%;margin-top:12px;border:0;border-radius:14px;background:var(--blue);color:white;padding:13px;font-size:16px;font-weight:800;cursor:pointer}.err{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;text-align:center;font-size:13px}
     .top{position:sticky;top:0;background:rgba(15,23,42,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:10}.topin{max-width:720px;margin:0 auto;padding:13px 14px;display:flex;align-items:center;gap:10px}.appicon{width:42px;height:42px;border-radius:15px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:21px}.head{flex:1}.head h1{font-size:17px}.head p{font-size:11px;color:var(--mut);margin-top:2px}.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--txt);width:42px;height:42px;border-radius:14px;font-size:18px;cursor:pointer}
-    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}.stat .n{font-size:28px;font-weight:800}.stat .l{color:var(--mut);font-size:12px;margin-top:2px}.stat.red{border-color:rgba(239,68,68,.24)}.stat.amber{border-color:rgba(245,158,11,.24)}.stat.green{border-color:rgba(34,197,94,.24)}
-    .search{display:flex;gap:8px;margin:14px 0 10px}.search input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none}.search button{width:48px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--txt);font-size:18px}
-    .tabs{display:flex;gap:8px;overflow:auto;margin:10px 0 14px;padding-bottom:4px}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:8px 13px;border-radius:999px;font-size:13px;cursor:pointer}.tab.on{background:rgba(59,130,246,.18);color:#93c5fd;border-color:rgba(59,130,246,.35)}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;margin-bottom:12px;overflow:hidden}.cardbody{padding:14px}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.subject{font-size:15px;font-weight:800;line-height:1.55;margin:8px 0;color:#fff}.meta{font-size:12px;color:var(--mut);line-height:1.8}.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.new{background:rgba(239,68,68,.15);color:#fca5a5}.pending{background:rgba(245,158,11,.15);color:#fcd34d}.done{background:rgba(34,197,94,.15);color:#86efac}.arch{background:rgba(148,163,184,.15);color:#cbd5e1}.type{background:rgba(59,130,246,.15);color:#93c5fd}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(15,23,42,.35);border-top:1px solid var(--line);padding:10px}.select{grid-column:1/-1;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:white;padding:11px;font-size:15px;outline:none}.smallbtn{border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:10px;font-weight:700;text-align:center;text-decoration:none;font-size:13px}.empty{text-align:center;color:var(--mut);padding:55px 10px;background:var(--card);border:1px solid var(--line);border-radius:22px}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:40;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center}.toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
-    .bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20}.nav{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px}.nav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px}.nav button.on{background:rgba(59,130,246,.14);color:#93c5fd}.nav b{display:block;font-size:19px;margin-bottom:2px}.loading{text-align:center;color:var(--mut);padding:25px}.note{font-size:12px;color:var(--mut);line-height:1.7;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18);border-radius:18px;padding:12px;margin-top:12px}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}.stat .n{font-size:28px;font-weight:800}.stat .l{color:var(--mut);font-size:12px;margin-top:2px}.search{display:flex;gap:8px;margin:14px 0 10px}.search input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none}.search button{width:48px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--txt);font-size:18px}.tabs{display:flex;gap:8px;overflow:auto;margin:10px 0 14px;padding-bottom:4px}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:8px 13px;border-radius:999px;font-size:13px;cursor:pointer}.tab.on{background:rgba(59,130,246,.18);color:#93c5fd;border-color:rgba(59,130,246,.35)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;margin-bottom:12px;overflow:hidden}.cardbody{padding:14px}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.subject{font-size:15px;font-weight:800;line-height:1.55;margin:8px 0;color:#fff}.meta{font-size:12px;color:var(--mut);line-height:1.8}.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.new{background:rgba(239,68,68,.15);color:#fca5a5}.pending{background:rgba(245,158,11,.15);color:#fcd34d}.done{background:rgba(34,197,94,.15);color:#86efac}.arch{background:rgba(148,163,184,.15);color:#cbd5e1}.type{background:rgba(59,130,246,.15);color:#93c5fd}.actions{background:rgba(15,23,42,.35);border-top:1px solid var(--line);padding:10px}.smallbtn{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:12px;font-weight:800;text-align:center;text-decoration:none;font-size:14px;cursor:pointer}.empty,.loading{text-align:center;color:var(--mut);padding:45px 10px;background:var(--card);border:1px solid var(--line);border-radius:22px}.select{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:white;padding:12px;font-size:16px;outline:none;margin-top:8px}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:80;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center}.toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
+    .bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20}.nav{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px}.nav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px}.nav button.on{background:rgba(59,130,246,.14);color:#93c5fd}.nav b{display:block;font-size:19px;margin-bottom:2px}
+    .modal{position:fixed;inset:0;background:rgba(2,6,23,.82);z-index:60;display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.sheet{width:100%;max-width:720px;max-height:88vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -20px 60px rgba(0,0,0,.35)}.modalHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.modalHead h2{font-size:18px}.close{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:20px}.drow{background:rgba(15,23,42,.35);border:1px solid var(--line);border-radius:14px;padding:11px;margin-bottom:8px}.drow b{display:block;color:#93c5fd;font-size:12px;margin-bottom:4px}.drow span{font-size:14px;line-height:1.7}.statusBox{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:16px;padding:12px;margin:10px 0}.statusBox label{font-size:14px;font-weight:800}.modalactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.preview{margin-top:10px;background:#020617;border-radius:16px;overflow:hidden;border:1px solid var(--line)}.preview img{display:block;width:100%;height:auto}.disabled{opacity:.55;pointer-events:none}.debug{font-size:11px;color:#94a3b8;text-align:center;margin-top:8px}
   </style>
 </head>
 <body>
   <div id="loginScreen" class="center">
     <div class="login">
-      <div class="logo">🛡️</div>
-      <div class="title">لوحة المدير للهاتف</div>
-      <div class="sub">متابعة البريد والتحديثات من منصة اللابتوب<br>مع إمكانية تعديل الحالة مباشرة من الهاتف</div>
-      <input id="pass" class="inp" type="password" placeholder="كلمة مرور المدير" onkeydown="if(event.key==='Enter')login()" />
-      <button class="btn" onclick="login()">دخول المدير</button>
+      <div class="logo">🛡️</div><div class="title">لوحة المدير للهاتف</div>
+      <div class="sub">متابعة المراسلات مع تعديل الحالة من داخل صفحة عرض المراسلة</div>
+      <input id="pass" class="inp" type="password" placeholder="كلمة مرور المدير" />
+      <button id="loginBtn" class="btn" type="button">دخول المدير</button>
       <div id="loginErr" class="err hide">كلمة المرور غير صحيحة</div>
-      <div class="note">كلمة المرور الحالية: 1821992 — يمكن تغييرها من أعلى الكود داخل المتغير MANAGER_PASSWORD.</div>
     </div>
   </div>
-
   <div id="app" class="hide">
-    <div class="top"><div class="topin"><div class="appicon">📬</div><div class="head"><h1>لوحة المدير</h1><p id="conn">جاري الاتصال بـ Firebase...</p></div><button class="iconbtn" onclick="logout()">↩</button></div></div>
+    <div class="top"><div class="topin"><div class="appicon">📬</div><div class="head"><h1>لوحة المدير v8</h1><p id="conn">جاري الاتصال بـ Firebase...</p></div><button class="iconbtn" id="logoutBtn">↩</button></div></div>
     <main class="wrap">
-      <div class="stats">
-        <div class="stat"><div class="n" id="stActive">0</div><div class="l">وارد نشط</div></div>
-        <div class="stat red"><div class="n" id="stNew">0</div><div class="l">جديد</div></div>
-        <div class="stat amber"><div class="n" id="stPending">0</div><div class="l">قيد المعالجة</div></div>
-        <div class="stat green"><div class="n" id="stDone">0</div><div class="l">منجز</div></div>
-      </div>
-      <div class="search"><input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم..." oninput="query=this.value;render()"><button onclick="refresh()">↻</button></div>
-      <div class="tabs">
-        <button class="tab on" id="tab-all" onclick="setFilter('all')">الكل</button>
-        <button class="tab" id="tab-new" onclick="setFilter('new')">جديد</button>
-        <button class="tab" id="tab-pending" onclick="setFilter('pending')">قيد المعالجة</button>
-        <button class="tab" id="tab-done" onclick="setFilter('done')">منجز</button>
-        <button class="tab" id="tab-archive" onclick="setFilter('archive')">الأرشيف</button>
-      </div>
-      <div id="list" class="loading">جاري تحميل البيانات...</div>
+      <div class="stats"><div class="stat"><div class="n" id="stActive">0</div><div class="l">وارد نشط</div></div><div class="stat"><div class="n" id="stNew">0</div><div class="l">جديد</div></div><div class="stat"><div class="n" id="stPending">0</div><div class="l">قيد المعالجة</div></div><div class="stat"><div class="n" id="stDone">0</div><div class="l">منجز</div></div></div>
+      <div class="search"><input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم..."><button id="refreshBtn" type="button">↻</button></div>
+      <div class="tabs"><button class="tab on" data-filter="all">الكل</button><button class="tab" data-filter="new">جديد</button><button class="tab" data-filter="pending">قيد المعالجة</button><button class="tab" data-filter="done">منجز</button><button class="tab" data-filter="archive">الأرشيف</button></div>
+      <div id="list" class="loading">جاري تحميل البيانات...</div><div class="debug">v8</div>
     </main>
-    <div class="bottom"><div class="nav"><button id="bn-all" class="on" onclick="setFilter('all')"><b>⌂</b>الرئيسية</button><button id="bn-new" onclick="setFilter('new')"><b>●</b>الجديد</button><button id="bn-pending" onclick="setFilter('pending')"><b>⏳</b>قيد</button><button id="bn-archive" onclick="setFilter('archive')"><b>🗄️</b>الأرشيف</button></div></div>
+    <div class="bottom"><div class="nav"><button class="on" data-filter="all"><b>⌂</b>الرئيسية</button><button data-filter="new"><b>●</b>الجديد</button><button data-filter="pending"><b>⏳</b>قيد</button><button data-filter="archive"><b>🗄️</b>الأرشيف</button></div></div>
   </div>
-
+  <div id="detailsModal" class="modal">
+    <div class="sheet">
+      <div class="modalHead"><h2>عرض المراسلة / تعديل الحالة</h2><button id="closeModal" class="close" type="button">×</button></div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
 <script>
 const MANAGER_PASSWORD = "1821992";
 const COLLECTION_NAME = "mails";
-const firebaseConfig = {
-  apiKey:"AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo",
-  authDomain:"ncdc-mail-a68ff.firebaseapp.com",
-  projectId:"ncdc-mail-a68ff",
-  storageBucket:"ncdc-mail-a68ff.firebasestorage.app",
-  messagingSenderId:"197299236308",
-  appId:"1:197299236308:web:4205dd506cbc0148a53a41"
-};
-let db, unsub, mails = [], filter = 'all', query = '';
-try{
-  if (typeof firebase !== 'undefined') {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-  }
-}catch(e){ console.error('Firebase init error:', e); }
-function normalizePasswordValue(v){
-  const map={'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9','۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9'};
-  return String(v||'').replace(/[٠-٩۰-۹]/g,ch=>map[ch]||ch).replace(/[^0-9]/g,'').trim();
-}
-function showApp(){
-  document.getElementById('loginScreen').classList.add('hide');
-  document.getElementById('app').classList.remove('hide');
-  listen();
-}
-function login(){
-  const inp=document.getElementById('pass');
-  const p=normalizePasswordValue(inp.value);
-  const err=document.getElementById('loginErr');
-  err.classList.add('hide');
-  if(p!==MANAGER_PASSWORD){
-    err.textContent='كلمة المرور غير صحيحة — تأكد من كتابة 1821992 بدون مسافات';
-    err.classList.remove('hide');
-    inp.focus();
-    return false;
-  }
-  showApp();
-  return false;
-}
-window.login = login;
-document.addEventListener('DOMContentLoaded', function(){
-  const btn=document.getElementById('loginBtn');
-  const pass=document.getElementById('pass');
-  if(btn) btn.addEventListener('click', login);
-  if(pass) pass.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); login(); } });
-});
+const firebaseConfig = {apiKey:"AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo",authDomain:"ncdc-mail-a68ff.firebaseapp.com",projectId:"ncdc-mail-a68ff",storageBucket:"ncdc-mail-a68ff.firebasestorage.app",messagingSenderId:"197299236308",appId:"1:197299236308:web:4205dd506cbc0148a53a41"};
+let db=null, unsub=null, mails=[], filter='all', query='';
+try{ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); db=firebase.firestore(); }catch(e){ console.error(e); }
+function normDigits(s){return String(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();}
+function login(){ const p=normDigits(document.getElementById('pass').value); if(p!==MANAGER_PASSWORD){document.getElementById('loginErr').classList.remove('hide');return;} document.getElementById('loginErr').classList.add('hide'); document.getElementById('loginScreen').classList.add('hide'); document.getElementById('app').classList.remove('hide'); listen(); }
 function logout(){ if(unsub)unsub(); document.getElementById('app').classList.add('hide'); document.getElementById('loginScreen').classList.remove('hide'); }
-function listen(){
-  if(!db){document.getElementById('conn').textContent='Firebase غير متصل — تحقق من الإنترنت'; document.getElementById('list').className='empty'; document.getElementById('list').innerHTML='تم الدخول، لكن Firebase غير متصل. جرّب تحديث الصفحة أو الإنترنت.'; return;}
-  document.getElementById('conn').textContent='متصل — تتم المزامنة مباشرة';
-  if(unsub)unsub();
-  unsub = db.collection(COLLECTION_NAME).orderBy('createdAt','desc').onSnapshot(snap=>{mails = snap.docs.map(d=>({id:d.id,...d.data()})); render();},err=>{console.error(err);document.getElementById('conn').textContent='تعذر الاتصال بقاعدة البيانات';document.getElementById('list').className='empty';document.getElementById('list').innerHTML='تم الدخول، لكن تعذر تحميل المراسلات من Firebase.';toast('تعذر الاتصال بـ Firebase',true);});
-}
-function refresh(){ if(unsub)unsub(); listen(); toast('تم التحديث'); }
-function setFilter(f){filter=f;document.querySelectorAll('.tab,.nav button').forEach(x=>x.classList.remove('on')); const t=document.getElementById('tab-'+f); if(t)t.classList.add('on'); const b=document.getElementById('bn-'+f); if(b)b.classList.add('on'); render();}
+function listen(){ if(!db){document.getElementById('conn').textContent='Firebase غير متصل';return;} document.getElementById('conn').textContent='متصل — تتم المزامنة مباشرة'; if(unsub)unsub(); unsub=db.collection(COLLECTION_NAME).orderBy('createdAt','desc').onSnapshot(snap=>{mails=snap.docs.map(d=>({id:d.id,...d.data()})); render();},err=>{console.error(err);document.getElementById('conn').textContent='تعذر الاتصال بقاعدة البيانات';document.getElementById('list').className='empty';document.getElementById('list').textContent='تعذر تحميل المراسلات من Firebase';toast('تعذر الاتصال بـ Firebase',true);});}
+function refresh(){listen();toast('تم التحديث');}
+function setFilter(f){filter=f;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x.dataset.filter===f));render();}
 function getStatus(m){ if(m.archived) return 'archive'; return m.status || 'new'; }
 function badge(status){ if(status==='new')return '<span class="badge new">جديد</span>'; if(status==='pending')return '<span class="badge pending">قيد المعالجة</span>'; if(status==='done')return '<span class="badge done">منجز</span>'; return '<span class="badge arch">الأرشيف</span>'; }
-function arType(t){ return t==='out'?'صادر':'وارد'; }
-function render(){
-  const active=mails.filter(m=>m.type==='in'&&!m.archived).length; const nw=mails.filter(m=>!m.archived&&getStatus(m)==='new').length; const pe=mails.filter(m=>!m.archived&&getStatus(m)==='pending').length; const dn=mails.filter(m=>!m.archived&&getStatus(m)==='done').length;
-  document.getElementById('stActive').textContent=active;document.getElementById('stNew').textContent=nw;document.getElementById('stPending').textContent=pe;document.getElementById('stDone').textContent=dn;
-  let arr=[...mails]; if(filter==='archive')arr=arr.filter(m=>m.archived); else if(filter!=='all')arr=arr.filter(m=>!m.archived&&getStatus(m)===filter); else arr=arr.filter(m=>!m.archived);
-  const q=(query||'').trim().toLowerCase(); if(q)arr=arr.filter(m=>[m.subject,m.party,m.ref,m.notes,m.date,m.from].join(' ').toLowerCase().includes(q));
-  const list=document.getElementById('list'); if(!arr.length){list.className='empty';list.innerHTML='لا توجد مراسلات مطابقة';return;} list.className='';
-  list.innerHTML=arr.map(m=>{ const st=getStatus(m); return `<section class="card"><div class="cardbody"><div class="row"><span class="badge type">${arType(m.type)}</span>${badge(st)}</div><div class="subject">${esc(m.subject||'بدون موضوع')}</div><div class="meta">الرقم: ${esc(m.ref||'غير محدد')}<br>الجهة: ${esc(m.party||m.from||'غير محدد')}<br>التاريخ: ${esc(m.date||'غير محدد')}</div></div><div class="actions"><button class="smallbtn viewbtn" onclick="openDetails('${m.id}')">عرض المراسلة / تعديل الحالة</button></div></section>`; }).join('');
-}
-function firstExisting(m, keys){ for(const k of keys){ if(m[k]) return m[k]; } return ''; }
-function openDetails(id){ const m=mails.find(x=>x.id===id); if(!m)return; const st=getStatus(m); const att=firstExisting(m,['att','attachmentUrl','pdfUrl','fileUrl','scanUrl','file','url','uploadedFileUrl']); const img=firstExisting(m,['img','imageUrl','image','photoUrl','scanImageUrl','attachmentImageUrl']); document.getElementById('modalContent').innerHTML=`
-  <div class="drow"><b>الموضوع</b><span>${esc(m.subject||'بدون موضوع')}</span></div>
-  <div class="drow"><b>الرقم</b><span>${esc(m.ref||'غير محدد')}</span></div>
-  <div class="drow"><b>التاريخ</b><span>${esc(m.date||'غير محدد')}</span></div>
-  <div class="drow"><b>من</b><span>${esc(m.party||m.from||'غير محدد')}</span></div>
-  <div class="drow"><b>الحالة</b><span id="currentStatusBadge">${badge(st)}</span></div>
-  <div class="drow"><b>الأولوية</b><span>${esc(m.priority||m.importance||'عادي')}</span></div>
-  ${m.notes?`<div class="drow"><b>ملاحظات</b><span>${esc(m.notes)}</span></div>`:''}
-  <div class="statusBox"><label>تعديل الحالة</label><select id="modalStatusSelect" class="select" onchange="changeStatus('${m.id}',this.value,true)"><option value="new" ${st==='new'?'selected':''}>جديد</option><option value="pending" ${st==='pending'?'selected':''}>قيد المعالجة</option><option value="done" ${st==='done'?'selected':''}>منجز</option><option value="archive" ${st==='archive'?'selected':''}>الأرشيف</option></select></div>
-  <div class="modalactions">${att?`<a class="smallbtn" href="${escAttr(att)}" target="_blank" rel="noopener">فتح الملف / PDF</a>`:'<button class="smallbtn" disabled>لا يوجد ملف</button>'}${img?`<a class="smallbtn" href="${escAttr(img)}" target="_blank" rel="noopener">فتح الصورة</a>`:'<button class="smallbtn" disabled>لا توجد صورة</button>'}</div>
-  ${img?`<div class="preview"><img src="${escAttr(img)}" alt="صورة المراسلة"></div>`:''}`;
-  document.getElementById('detailsModal').classList.add('show'); }
-function closeDetails(){ document.getElementById('detailsModal').classList.remove('show'); }
-async function changeStatus(id, val, keepModal=false){ const m=mails.find(x=>x.id===id); if(!m)return; const archived = val==='archive'; const status = archived ? 'done' : val; try{ await db.collection(COLLECTION_NAME).doc(id).set({status, archived, statusUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()}, {merge:true}); toast('تم تعديل الحالة بنجاح'); if(keepModal){ const fake={...m,status,archived}; document.getElementById('currentStatusBadge').innerHTML=badge(getStatus(fake)); } }catch(e){ console.error(e); toast('حدث خطأ أثناء تعديل الحالة',true); render(); } }
+function arType(t){return t==='out'?'صادر':'وارد';}
+function render(){ const active=mails.filter(m=>m.type==='in'&&!m.archived).length, nw=mails.filter(m=>!m.archived&&getStatus(m)==='new').length, pe=mails.filter(m=>!m.archived&&getStatus(m)==='pending').length, dn=mails.filter(m=>!m.archived&&getStatus(m)==='done').length; document.getElementById('stActive').textContent=active;document.getElementById('stNew').textContent=nw;document.getElementById('stPending').textContent=pe;document.getElementById('stDone').textContent=dn; let arr=[...mails]; if(filter==='archive')arr=arr.filter(m=>m.archived); else if(filter!=='all')arr=arr.filter(m=>!m.archived&&getStatus(m)===filter); else arr=arr.filter(m=>!m.archived); const q=query.trim().toLowerCase(); if(q) arr=arr.filter(m=>[m.subject,m.party,m.from,m.ref,m.notes,m.date].join(' ').toLowerCase().includes(q)); const list=document.getElementById('list'); if(!arr.length){list.className='empty';list.textContent='لا توجد مراسلات مطابقة';return;} list.className=''; list.innerHTML=arr.map(m=>`<section class="card"><div class="cardbody"><div class="row"><span class="badge type">${arType(m.type)}</span>${badge(getStatus(m))}</div><div class="subject">${esc(m.subject||'بدون موضوع')}</div><div class="meta">الرقم: ${esc(m.ref||'غير محدد')}<br>الجهة: ${esc(m.party||m.from||'غير محدد')}<br>التاريخ: ${esc(m.date||'غير محدد')}</div></div><div class="actions"><button class="smallbtn openDetailsBtn" type="button" data-id="${escAttr(m.id)}">عرض المراسلة / تعديل الحالة</button></div></section>`).join('');}
+function firstExisting(m,keys){for(const k of keys){if(m[k])return m[k];}return '';}
+function openDetails(id){ const m=mails.find(x=>String(x.id)===String(id)); if(!m){toast('لم يتم العثور على المراسلة',true);return;} const st=getStatus(m); const att=firstExisting(m,['att','attachmentUrl','pdfUrl','fileUrl','scanUrl','file','url','uploadedFileUrl','attachment','documentUrl']); const img=firstExisting(m,['img','imageUrl','image','photoUrl','scanImageUrl','attachmentImageUrl','imageData','photo','scan']); const html=`<div class="drow"><b>الموضوع</b><span>${esc(m.subject||'بدون موضوع')}</span></div><div class="drow"><b>الرقم</b><span>${esc(m.ref||'غير محدد')}</span></div><div class="drow"><b>التاريخ</b><span>${esc(m.date||'غير محدد')}</span></div><div class="drow"><b>الجهة</b><span>${esc(m.party||m.from||'غير محدد')}</span></div><div class="drow"><b>الحالة الحالية</b><span id="currentStatusBadge">${badge(st)}</span></div>${m.notes?`<div class="drow"><b>ملاحظات</b><span>${esc(m.notes)}</span></div>`:''}<div class="statusBox"><label>تعديل الحالة</label><select id="modalStatusSelect" class="select" data-id="${escAttr(m.id)}"><option value="new" ${st==='new'?'selected':''}>جديد</option><option value="pending" ${st==='pending'?'selected':''}>قيد المعالجة</option><option value="done" ${st==='done'?'selected':''}>منجز</option><option value="archive" ${st==='archive'?'selected':''}>الأرشيف</option></select></div><div class="modalactions">${att?`<a class="smallbtn" href="${escAttr(att)}" target="_blank" rel="noopener">فتح الملف / PDF</a>`:'<button class="smallbtn disabled" type="button">لا يوجد ملف</button>'}${img?`<a class="smallbtn" href="${escAttr(img)}" target="_blank" rel="noopener">فتح الصورة</a>`:'<button class="smallbtn disabled" type="button">لا توجد صورة</button>'}</div>${img?`<div class="preview"><img src="${escAttr(img)}" alt="صورة المراسلة" onerror="this.parentElement.style.display='none'" /></div>`:''}`; document.getElementById('modalContent').innerHTML=html; document.getElementById('detailsModal').classList.add('show');}
+function closeDetails(){document.getElementById('detailsModal').classList.remove('show');}
+async function changeStatus(id,val){ const m=mails.find(x=>String(x.id)===String(id)); if(!m){toast('لم يتم العثور على المراسلة',true);return;} const archived=val==='archive'; const status=archived?'done':val; try{ await db.collection(COLLECTION_NAME).doc(id).set({status,archived,statusUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); const fake={...m,status,archived}; const b=document.getElementById('currentStatusBadge'); if(b)b.innerHTML=badge(getStatus(fake)); toast('تم تعديل الحالة بنجاح'); }catch(e){console.error(e);toast('حدث خطأ أثناء تعديل الحالة',true);} }
 function toast(msg,bad=false){const t=document.createElement('div');t.className='toast'+(bad?' bad':'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));}
 function escAttr(s){return esc(s).replace(/`/g,'');}
-// إزالة أي Service Worker قديم لأنه كان يحفظ نسخة قديمة من التطبيق
+document.addEventListener('click',e=>{ const openBtn=e.target.closest('.openDetailsBtn'); if(openBtn){openDetails(openBtn.dataset.id);return;} const filterBtn=e.target.closest('[data-filter]'); if(filterBtn){setFilter(filterBtn.dataset.filter);return;} });
+document.addEventListener('change',e=>{ if(e.target && e.target.id==='modalStatusSelect') changeStatus(e.target.dataset.id,e.target.value); });
+document.getElementById('loginBtn').addEventListener('click',login);document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});document.getElementById('logoutBtn').addEventListener('click',logout);document.getElementById('refreshBtn').addEventListener('click',refresh);document.getElementById('q').addEventListener('input',e=>{query=e.target.value;render();});document.getElementById('closeModal').addEventListener('click',closeDetails);document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target.id==='detailsModal')closeDetails();});
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{});}
-</script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Tajawal,Arial,sans-serif}
-    :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:rgba(148,163,184,.18);--txt:#f8fafc;--mut:#94a3b8;--blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--violet:#8b5cf6}
-    body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:78px}
-    .hide{display:none!important}.wrap{max-width:720px;margin:0 auto;padding:14px}.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
-    .login{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 20px;box-shadow:0 16px 50px rgba(0,0,0,.25)}
-    .logo{width:62px;height:62px;border-radius:20px;background:rgba(59,130,246,.14);color:#93c5fd;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}.title{text-align:center;font-size:21px;font-weight:800}.sub{text-align:center;color:var(--mut);font-size:13px;margin-top:5px;line-height:1.6}.inp{width:100%;margin-top:18px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:16px;outline:none;text-align:center}.btn{width:100%;margin-top:12px;border:0;border-radius:14px;background:var(--blue);color:white;padding:13px;font-size:16px;font-weight:800;cursor:pointer}.err{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;text-align:center;font-size:13px}
-    .top{position:sticky;top:0;background:rgba(15,23,42,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:10}.topin{max-width:720px;margin:0 auto;padding:13px 14px;display:flex;align-items:center;gap:10px}.appicon{width:42px;height:42px;border-radius:15px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:21px}.head{flex:1}.head h1{font-size:17px}.head p{font-size:11px;color:var(--mut);margin-top:2px}.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--txt);width:42px;height:42px;border-radius:14px;font-size:18px;cursor:pointer}
-    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}.stat .n{font-size:28px;font-weight:800}.stat .l{color:var(--mut);font-size:12px;margin-top:2px}.stat.red{border-color:rgba(239,68,68,.24)}.stat.amber{border-color:rgba(245,158,11,.24)}.stat.green{border-color:rgba(34,197,94,.24)}
-    .search{display:flex;gap:8px;margin:14px 0 10px}.search input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none}.search button{width:48px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--txt);font-size:18px}
-    .tabs{display:flex;gap:8px;overflow:auto;margin:10px 0 14px;padding-bottom:4px}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:8px 13px;border-radius:999px;font-size:13px;cursor:pointer}.tab.on{background:rgba(59,130,246,.18);color:#93c5fd;border-color:rgba(59,130,246,.35)}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;margin-bottom:12px;overflow:hidden}.cardbody{padding:14px}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.subject{font-size:15px;font-weight:800;line-height:1.55;margin:8px 0;color:#fff}.meta{font-size:12px;color:var(--mut);line-height:1.8}.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.new{background:rgba(239,68,68,.15);color:#fca5a5}.pending{background:rgba(245,158,11,.15);color:#fcd34d}.done{background:rgba(34,197,94,.15);color:#86efac}.arch{background:rgba(148,163,184,.15);color:#cbd5e1}.type{background:rgba(59,130,246,.15);color:#93c5fd}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(15,23,42,.35);border-top:1px solid var(--line);padding:10px}.select{grid-column:1/-1;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:white;padding:11px;font-size:15px;outline:none}.smallbtn{border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:10px;font-weight:700;text-align:center;text-decoration:none;font-size:13px}.empty{text-align:center;color:var(--mut);padding:55px 10px;background:var(--card);border:1px solid var(--line);border-radius:22px}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:40;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center}.toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
-    .bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20}.nav{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px}.nav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px}.nav button.on{background:rgba(59,130,246,.14);color:#93c5fd}.nav b{display:block;font-size:19px;margin-bottom:2px}.loading{text-align:center;color:var(--mut);padding:25px}.note{font-size:12px;color:var(--mut);line-height:1.7;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18);border-radius:18px;padding:12px;margin-top:12px}
-  </style>
-</head>
-<body>
-  <div id="loginScreen" class="center">
-    <div class="login">
-      <div class="logo">🛡️</div>
-      <div class="title">لوحة المدير للهاتف</div>
-      <div class="sub">متابعة البريد والتحديثات من منصة اللابتوب<br>مع إمكانية تعديل الحالة مباشرة من الهاتف</div>
-      <input id="pass" class="inp" type="password" placeholder="كلمة مرور المدير" onkeydown="if(event.key==='Enter')login()" />
-      <button class="btn" onclick="login()">دخول المدير</button>
-      <div id="loginErr" class="err hide">كلمة المرور غير صحيحة</div>
-      <div class="note">كلمة المرور الحالية: 1821992 — يمكن تغييرها من أعلى الكود داخل المتغير MANAGER_PASSWORD.</div>
-    </div>
-  </div>
-
-  <div id="app" class="hide">
-    <div class="top"><div class="topin"><div class="appicon">📬</div><div class="head"><h1>لوحة المدير</h1><p id="conn">جاري الاتصال بـ Firebase...</p></div><button class="iconbtn" onclick="logout()">↩</button></div></div>
-    <main class="wrap">
-      <div class="stats">
-        <div class="stat"><div class="n" id="stActive">0</div><div class="l">وارد نشط</div></div>
-        <div class="stat red"><div class="n" id="stNew">0</div><div class="l">جديد</div></div>
-        <div class="stat amber"><div class="n" id="stPending">0</div><div class="l">قيد المعالجة</div></div>
-        <div class="stat green"><div class="n" id="stDone">0</div><div class="l">منجز</div></div>
-      </div>
-      <div class="search"><input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم..." oninput="query=this.value;render()"><button onclick="refresh()">↻</button></div>
-      <div class="tabs">
-        <button class="tab on" id="tab-all" onclick="setFilter('all')">الكل</button>
-        <button class="tab" id="tab-new" onclick="setFilter('new')">جديد</button>
-        <button class="tab" id="tab-pending" onclick="setFilter('pending')">قيد المعالجة</button>
-        <button class="tab" id="tab-done" onclick="setFilter('done')">منجز</button>
-        <button class="tab" id="tab-archive" onclick="setFilter('archive')">الأرشيف</button>
-      </div>
-      <div id="list" class="loading">جاري تحميل البيانات...</div>
-    </main>
-    <div class="bottom"><div class="nav"><button id="bn-all" class="on" onclick="setFilter('all')"><b>⌂</b>الرئيسية</button><button id="bn-new" onclick="setFilter('new')"><b>●</b>الجديد</button><button id="bn-pending" onclick="setFilter('pending')"><b>⏳</b>قيد</button><button id="bn-archive" onclick="setFilter('archive')"><b>🗄️</b>الأرشيف</button></div></div>
-  </div>
-
-<script>
-const MANAGER_PASSWORD = "1821992";
-const COLLECTION_NAME = "mails";
-const firebaseConfig = {
-  apiKey:"AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo",
-  authDomain:"ncdc-mail-a68ff.firebaseapp.com",
-  projectId:"ncdc-mail-a68ff",
-  storageBucket:"ncdc-mail-a68ff.firebasestorage.app",
-  messagingSenderId:"197299236308",
-  appId:"1:197299236308:web:4205dd506cbc0148a53a41"
-};
-let db, unsub, mails = [], filter = 'all', query = '';
-try{ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); }catch(e){ console.error(e); }
-function login(){
-  const p=document.getElementById('pass').value.trim();
-  if(p!==MANAGER_PASSWORD){document.getElementById('loginErr').classList.remove('hide');return;}
-  document.getElementById('loginScreen').classList.add('hide');document.getElementById('app').classList.remove('hide');listen();
-}
-function logout(){ if(unsub)unsub(); document.getElementById('app').classList.add('hide'); document.getElementById('loginScreen').classList.remove('hide'); }
-function listen(){
-  if(!db){document.getElementById('conn').textContent='Firebase غير متصل';return;}
-  document.getElementById('conn').textContent='متصل — تتم المزامنة مباشرة';
-  unsub = db.collection(COLLECTION_NAME).orderBy('createdAt','desc').onSnapshot(snap=>{
-    mails = snap.docs.map(d=>({id:d.id,...d.data()})); render();
-  },err=>{console.error(err);document.getElementById('conn').textContent='تعذر الاتصال بقاعدة البيانات';toast('تعذر الاتصال بـ Firebase',true);});
-}
-function refresh(){ if(unsub)unsub(); listen(); toast('تم التحديث'); }
-function setFilter(f){filter=f;document.querySelectorAll('.tab,.nav button').forEach(x=>x.classList.remove('on'));document.getElementById('tab-'+f)?.classList.add('on');document.getElementById('bn-'+f)?.classList.add('on');render();}
-function getStatus(m){ if(m.archived) return 'archive'; return m.status || 'new'; }
-function badge(status){
-  if(status==='new')return '<span class="badge new">جديد</span>';
-  if(status==='pending')return '<span class="badge pending">قيد المعالجة</span>';
-  if(status==='done')return '<span class="badge done">منجز</span>';
-  return '<span class="badge arch">الأرشيف</span>';
-}
-function arType(t){ return t==='out'?'صادر':'وارد'; }
-function render(){
-  const active=mails.filter(m=>m.type==='in'&&!m.archived).length;
-  const nw=mails.filter(m=>!m.archived&&m.status==='new').length;
-  const pe=mails.filter(m=>!m.archived&&m.status==='pending').length;
-  const dn=mails.filter(m=>!m.archived&&m.status==='done').length;
-  document.getElementById('stActive').textContent=active;document.getElementById('stNew').textContent=nw;document.getElementById('stPending').textContent=pe;document.getElementById('stDone').textContent=dn;
-  let arr=[...mails];
-  if(filter==='archive')arr=arr.filter(m=>m.archived);
-  else if(filter!=='all')arr=arr.filter(m=>!m.archived&&m.status===filter);
-  else arr=arr.filter(m=>!m.archived);
-  const q=(query||'').trim().toLowerCase();
-  if(q)arr=arr.filter(m=>[m.subject,m.party,m.ref,m.notes,m.date].join(' ').toLowerCase().includes(q));
-  const list=document.getElementById('list');
-  if(!arr.length){list.className='empty';list.innerHTML='لا توجد مراسلات مطابقة';return;}
-  list.className='';
-  list.innerHTML=arr.map(m=>{
-    const st=getStatus(m);
-    const att=m.att||m.attachmentUrl||m.pdfUrl||m.fileUrl||''; const img=m.img||m.imageUrl||'';
-    return `<section class="card">
-      <div class="cardbody">
-        <div class="row"><span class="badge type">${arType(m.type)}</span>${badge(st)}</div>
-        <div class="subject">${esc(m.subject||'بدون موضوع')}</div>
-        <div class="meta">الرقم: ${esc(m.ref||'غير محدد')}<br>الجهة: ${esc(m.party||'غير محدد')}<br>التاريخ: ${esc(m.date||'غير محدد')}</div>
-      </div>
-      <div class="actions">
-        <select class="select" onchange="changeStatus('${m.id}',this.value)">
-          <option value="new" ${st==='new'?'selected':''}>جديد</option>
-          <option value="pending" ${st==='pending'?'selected':''}>قيد المعالجة</option>
-          <option value="done" ${st==='done'?'selected':''}>منجز</option>
-          <option value="archive" ${st==='archive'?'selected':''}>الأرشيف</option>
-        </select>
-        ${att?`<a class="smallbtn" href="${att}" target="_blank">فتح PDF</a>`:'<button class="smallbtn" disabled>لا يوجد PDF</button>'}
-        ${img?`<a class="smallbtn" href="${img}" target="_blank">فتح الصورة</a>`:'<button class="smallbtn" disabled>لا توجد صورة</button>'}
-      </div>
-    </section>`;
-  }).join('');
-}
-async function changeStatus(id, val){
-  const m=mails.find(x=>x.id===id); if(!m)return;
-  const archived = val==='archive'; const status = archived ? (m.status||'done') : val;
-  try{
-    await db.collection(COLLECTION_NAME).doc(id).set({status, archived, statusUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()}, {merge:true});
-    toast('تم تعديل الحالة بنجاح');
-  }catch(e){ console.error(e); toast('حدث خطأ أثناء تعديل الحالة',true); render(); }
-}
-function toast(msg,bad=false){const t=document.createElement('div');t.className='toast'+(bad?' bad':'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
-function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
 </html>
