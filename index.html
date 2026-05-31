@@ -285,8 +285,19 @@ function initFirebase(){
 async function registerSW(){
   if(!('serviceWorker' in navigator)) return null;
   try{
-    const reg = await navigator.serviceWorker.register('./sw.js', {scope:'./'});
-    console.log('[PWA] SW registered');
+    // ✅ نسجّل firebase-messaging-sw.js يدوياً بالمسار الصحيح
+    // حتى لا يبحث Firebase عنه في جذر الدومين (/)
+    const reg = await navigator.serviceWorker.register(
+      './firebase-messaging-sw.js',
+      { scope: './' }
+    );
+    console.log('[PWA] SW registered:', reg.scope);
+
+    // نعطي Firebase هذا التسجيل مباشرة
+    if(messaging){
+      messaging.useServiceWorker(reg);
+    }
+
     return reg;
   }catch(e){
     console.warn('[PWA] SW failed:', e);
@@ -305,8 +316,17 @@ async function setupFCM(){
       return;
     }
 
-    // الحصول على FCM Token
-    const token = await messaging.getToken({ vapidKey: VAPID_KEY });
+    // ✅ تسجيل SW بالمسار الصحيح وتمريره لـ Firebase قبل طلب التوكن
+    let swReg = null;
+    try{
+      swReg = await navigator.serviceWorker.register('./firebase-messaging-sw.js', {scope:'./'});
+      await navigator.serviceWorker.ready;
+    }catch(e){ console.warn('SW reg warn:', e); }
+
+    // الحصول على FCM Token مع تمرير SW registration
+    const tokenOptions = { vapidKey: VAPID_KEY };
+    if(swReg) tokenOptions.serviceWorkerRegistration = swReg;
+    const token = await messaging.getToken(tokenOptions);
     if(token){
       console.log('[FCM] Token:', token);
       // حفظ التوكن في Firestore ليستخدمه السيرفر لإرسال الإشعارات
