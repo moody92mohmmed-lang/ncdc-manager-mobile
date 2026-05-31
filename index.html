@@ -220,7 +220,7 @@
     </div>
 
     <div id="list" class="loading">جاري تحميل البيانات...</div>
-    <div class="debug">v10 · PWA · Real-time · BG Watch</div>
+    <div class="debug">v11 · PWA · Real-time · BG Watch · Sound</div>
   </main>
 
   <!-- شريط التنقل السفلي -->
@@ -435,6 +435,7 @@ function startListen(){
           setTimeout(()=>setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً'),3000);
           const m = newOnes[0];
           toast('وصل بريد جديد 📬');
+          playNotifSound();
           sendNotification(
             'وصل بريد جديد 📬',
             (m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''),
@@ -599,6 +600,40 @@ document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target
 document.getElementById('installBtn').addEventListener('click',doInstall);
 document.getElementById('installIconBtn').addEventListener('click',doInstall);
 document.getElementById('dismissInstall').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
+
+
+/* ══ الصوت ══ */
+function playNotifSound(){
+  try{
+    // نغمة تنبيه مُولَّدة بـ Web Audio API — بدون ملف خارجي
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function beep(freq, start, dur, vol=0.4){
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = freq;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0, ctx.currentTime + start);
+      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.01);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur);
+      o.start(ctx.currentTime + start);
+      o.stop(ctx.currentTime + start + dur + 0.05);
+    }
+    
+    // نغمة تنبيه بريد — ثلاث نبضات صاعدة
+    beep(520, 0.0,  0.12, 0.5);
+    beep(660, 0.15, 0.12, 0.5);
+    beep(800, 0.30, 0.20, 0.6);
+  }catch(e){ console.warn('Sound error:', e); }
+}
+
+// استقبال أمر الصوت من Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message', e => {
+    if(e.data?.type === 'PLAY_SOUND') playNotifSound();
+  });
+}
 
 /* ══ تشغيل ══ */
 initFirebase();
