@@ -4,28 +4,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NCDC — لوحة المدير v10</title>
+  <title>NCDC — بريد إدارة التطعيمات</title>
   <meta name="theme-color" content="#0f172a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="NCDC مدير" />
+  <meta name="apple-mobile-web-app-title" content="NCDC بريد" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png" />
-  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:Tajawal,Arial,sans-serif}
-    :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:rgba(148,163,184,.2);--txt:#f8fafc;--mut:#94a3b8;--blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}
+    :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:rgba(148,163,184,.2);--txt:#f8fafc;--mut:#94a3b8;--blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--purple:#a855f7}
     body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:78px}
     .hide{display:none!important}
     .wrap{max-width:720px;margin:0 auto;padding:14px}
     .center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
 
-    /* LOGIN */
+    /* ══ شاشة الاختيار ══ */
+    #roleScreen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+    .role-logo{text-align:center;margin-bottom:32px}
+    .role-logo .shield{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,rgba(59,130,246,.25),rgba(168,85,247,.15));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 14px;box-shadow:0 0 40px rgba(59,130,246,.2)}
+    .role-logo h1{font-size:22px;font-weight:800;letter-spacing:.5px}
+    .role-logo p{color:var(--mut);font-size:13px;margin-top:6px;line-height:1.7}
+    .role-cards{width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px}
+    .role-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+    .role-card:active{transform:scale(.97)}
+    .role-card.manager{border-color:rgba(59,130,246,.35)}
+    .role-card.manager:hover{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.5)}
+    .role-card.employee{border-color:rgba(34,197,94,.35)}
+    .role-card.employee:hover{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.5)}
+    .role-icon{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+    .role-icon.m{background:rgba(59,130,246,.15)}
+    .role-icon.e{background:rgba(34,197,94,.15)}
+    .role-info{flex:1}
+    .role-info strong{display:block;font-size:17px;font-weight:800;margin-bottom:3px}
+    .role-info span{font-size:12px;color:var(--mut);line-height:1.6}
+    .role-arrow{color:var(--mut);font-size:20px}
+
+    /* ══ LOGIN ══ */
     .login{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 20px;box-shadow:0 16px 50px rgba(0,0,0,.25)}
     .logo{width:64px;height:64px;border-radius:20px;background:rgba(59,130,246,.14);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px}
     .title{text-align:center;font-size:22px;font-weight:800}
@@ -33,9 +52,11 @@
     .inp{width:100%;margin-top:18px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:17px;outline:none;text-align:center;font-family:Tajawal,sans-serif}
     .inp:focus{border-color:var(--blue)}
     .loginbtn{width:100%;margin-top:12px;border:0;border-radius:14px;background:var(--blue);color:white;padding:13px;font-size:16px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif}
+    .loginbtn.green{background:var(--green)}
+    .backbtn{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:14px;background:transparent;color:var(--mut);padding:11px;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif}
     .err{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;text-align:center;font-size:13px}
 
-    /* INSTALL BANNER */
+    /* ══ INSTALL ══ */
     #installBanner{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(34,197,94,.1));border:1px solid rgba(59,130,246,.3);border-radius:18px;padding:14px 16px;margin:12px 14px 0;display:none;align-items:center;gap:12px}
     #installBanner.show{display:flex}
     .ib-icon{font-size:28px;flex-shrink:0}
@@ -43,26 +64,23 @@
     .ib-text span{font-size:12px;color:var(--mut)}
     #installBtn{background:var(--blue);color:white;border:none;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;white-space:nowrap}
     #dismissInstall{background:transparent;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;line-height:1}
-
-    /* iOS HINT */
     #iosHint{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:14px;padding:12px 14px;margin:12px 14px 0;display:none;font-size:12px;color:#93c5fd;line-height:1.9;text-align:center}
     #iosHint.show{display:block}
 
-    /* TOP */
+    /* ══ TOP BAR ══ */
     .top{position:sticky;top:0;background:rgba(15,23,42,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:10}
     .topin{max-width:720px;margin:0 auto;padding:13px 14px;display:flex;align-items:center;gap:10px}
     .appicon{width:42px;height:42px;border-radius:15px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:21px}
+    .appicon.emp{background:rgba(34,197,94,.15)}
     .head{flex:1}.head h1{font-size:17px}.head p{font-size:11px;color:var(--mut);margin-top:2px}
     .iconbtn{border:1px solid var(--line);background:var(--card);color:var(--txt);width:42px;height:42px;border-radius:14px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-
-    /* CONN DOT */
     #connDot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:5px;background:#94a3b8;vertical-align:middle;transition:background .4s}
     #connDot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
     #connDot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
     #connDot.wait{background:var(--amber);animation:blink 1s infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-    /* BANNERS */
+    /* ══ BANNERS ══ */
     .banner{border-radius:14px;padding:11px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
     .banner.show{display:flex}
     .banner span{flex:1;font-size:13px;line-height:1.6}
@@ -74,12 +92,12 @@
     #notifBanner span{color:#fcd34d}
     #allowNotifBtn{background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.4);color:#fcd34d}
 
-    /* STATS */
+    /* ══ STATS ══ */
     .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
     .stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}
     .stat .n{font-size:28px;font-weight:800}.stat .l{color:var(--mut);font-size:12px;margin-top:2px}
 
-    /* SEARCH & TABS */
+    /* ══ SEARCH & TABS ══ */
     .search{display:flex;gap:8px;margin:14px 0 10px}
     .search input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none;font-family:Tajawal,sans-serif}
     .search input:focus{border-color:var(--blue)}
@@ -88,7 +106,7 @@
     .tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:8px 13px;border-radius:999px;font-size:13px;cursor:pointer}
     .tab.on{background:rgba(59,130,246,.18);color:#93c5fd;border-color:rgba(59,130,246,.35)}
 
-    /* CARDS */
+    /* ══ CARDS ══ */
     .card{background:var(--card);border:1px solid var(--line);border-radius:22px;margin-bottom:12px;overflow:hidden}
     .cardbody{padding:14px}
     .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
@@ -100,27 +118,31 @@
     .done{background:rgba(34,197,94,.15);color:#86efac}
     .arch{background:rgba(148,163,184,.15);color:#cbd5e1}
     .type{background:rgba(59,130,246,.15);color:#93c5fd}
+    .emp-badge{background:rgba(168,85,247,.15);color:#d8b4fe}
     .actions{background:rgba(15,23,42,.35);border-top:1px solid var(--line);padding:10px}
     .smallbtn{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:12px;font-weight:800;text-align:center;text-decoration:none;font-size:14px;cursor:pointer;display:block}
     .empty,.loading{text-align:center;color:var(--mut);padding:45px 10px;background:var(--card);border:1px solid var(--line);border-radius:22px}
     .select{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:white;padding:12px;font-size:16px;outline:none;margin-top:8px;font-family:Tajawal,sans-serif}
     .disabled{opacity:.55;pointer-events:none}
 
-    /* TOAST */
-    .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:80;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center;font-size:14px}
+    /* ══ TOAST ══ */
+    .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:999;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center;font-size:14px}
     .toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
 
-    /* BOTTOM NAV */
+    /* ══ BOTTOM NAV ══ */
     .bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20}
-    .nav{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px}
+    .nav{max-width:720px;margin:0 auto;display:grid;gap:4px;padding:8px}
+    .nav.mgr{grid-template-columns:repeat(4,1fr)}
+    .nav.emp{grid-template-columns:repeat(3,1fr)}
     .nav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px;cursor:pointer;font-family:Tajawal,sans-serif}
     .nav button.on{background:rgba(59,130,246,.14);color:#93c5fd}
+    .nav button.on.emp-nav{background:rgba(34,197,94,.12);color:#86efac}
     .nav b{display:block;font-size:19px;margin-bottom:2px}
 
-    /* MODAL */
+    /* ══ MODAL ══ */
     .modal{position:fixed;inset:0;background:rgba(2,6,23,.82);z-index:60;display:none;align-items:flex-end;justify-content:center}
     .modal.show{display:flex}
-    .sheet{width:100%;max-width:720px;max-height:88vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -20px 60px rgba(0,0,0,.35)}
+    .sheet{width:100%;max-width:720px;max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -20px 60px rgba(0,0,0,.35)}
     .modalHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
     .modalHead h2{font-size:18px}
     .close{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:20px;cursor:pointer}
@@ -134,24 +156,101 @@
     .preview img{display:block;width:100%;height:auto}
     .debug{font-size:11px;color:#475569;text-align:center;margin-top:10px;padding-bottom:4px}
 
-    /* IMAGE VIEWER */
+    /* ══ IMAGE VIEWER ══ */
     #imgViewer{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:200;display:none;flex-direction:column}
     #imgViewer.show{display:flex}
     #imgViewerHead{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(15,23,42,.9);flex-shrink:0}
     #imgViewerTitle{flex:1;font-size:14px;font-weight:700;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     #imgViewerBody{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:12px}
     #imgViewerBody img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
-    #imgViewerBody iframe{width:100%;height:100%;border:none;border-radius:8px;background:#525659}
     .vbtn{border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;gap:5px}
     .vbtn-close{background:rgba(239,68,68,.2);color:#fca5a5}
     .vbtn-dl{background:rgba(34,197,94,.15);color:#86efac}
 
+    /* ══ نموذج الموظف ══ */
+    #empApp{display:none}
+    #empApp.show{display:block}
+    .emp-form-card{background:var(--card);border:1px solid rgba(34,197,94,.25);border-radius:22px;padding:16px;margin-bottom:14px}
+    .emp-form-card h3{font-size:15px;font-weight:800;color:#86efac;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .field-label{font-size:12px;color:var(--mut);margin-bottom:6px;margin-top:12px;display:block;font-weight:700}
+    .field-inp{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:13px;font-size:15px;outline:none;font-family:Tajawal,sans-serif;resize:none}
+    .field-inp:focus{border-color:var(--green)}
+    .field-select{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:13px;font-size:15px;outline:none;font-family:Tajawal,sans-serif}
+    .field-select:focus{border-color:var(--green)}
+
+    /* منطقة الصورة */
+    .img-zone{border:2px dashed rgba(34,197,94,.35);border-radius:18px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-top:8px;background:rgba(34,197,94,.04)}
+    .img-zone:hover,.img-zone.drag{border-color:var(--green);background:rgba(34,197,94,.08)}
+    .img-zone .iz-icon{font-size:36px;margin-bottom:8px}
+    .img-zone .iz-txt{font-size:14px;color:var(--mut)}
+    .img-zone .iz-sub{font-size:11px;color:#475569;margin-top:4px}
+    #imgPreviewWrap{margin-top:12px;display:none}
+    #imgPreviewWrap img{width:100%;border-radius:14px;border:1px solid var(--line);display:block}
+    .img-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .img-btn{border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+    .img-btn.camera{border-color:rgba(34,197,94,.4);color:#86efac;background:rgba(34,197,94,.08)}
+    .img-btn.gallery{border-color:rgba(59,130,246,.4);color:#93c5fd;background:rgba(59,130,246,.08)}
+    .img-btn.remove{border-color:rgba(239,68,68,.3);color:#fca5a5;background:rgba(239,68,68,.06)}
+    #hiddenFileInput{display:none}
+    #hiddenCameraInput{display:none}
+
+    /* زر الإرسال */
+    .submit-btn{width:100%;border:0;border-radius:16px;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;padding:16px;font-size:17px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;margin-top:6px;box-shadow:0 4px 20px rgba(34,197,94,.25)}
+    .submit-btn:disabled{opacity:.5;pointer-events:none}
+
+    /* إرسال — مراسلاتي */
+    .my-mail-card{background:var(--card);border:1px solid rgba(34,197,94,.2);border-radius:20px;margin-bottom:10px;overflow:hidden}
+    .my-mail-body{padding:14px}
+    .my-status{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
+    .ms-new{background:rgba(239,68,68,.15);color:#fca5a5}
+    .ms-pending{background:rgba(245,158,11,.15);color:#fcd34d}
+    .ms-done{background:rgba(34,197,94,.15);color:#86efac}
+
+    /* رسالة نجاح */
+    .success-overlay{position:fixed;inset:0;background:rgba(2,6,23,.9);z-index:500;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;display:none}
+    .success-overlay.show{display:flex}
+    .success-circle{width:90px;height:90px;border-radius:50%;background:rgba(34,197,94,.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:44px;animation:pop .4s ease}
+    @keyframes pop{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+    .success-title{font-size:22px;font-weight:800;color:#86efac}
+    .success-sub{font-size:13px;color:var(--mut);text-align:center;max-width:280px;line-height:1.7}
+    .success-btn{background:var(--green);color:white;border:none;border-radius:14px;padding:13px 32px;font-size:15px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;margin-top:6px}
   </style>
 </head>
 <body>
 
-<!-- شاشة الدخول -->
-<div id="loginScreen" class="center">
+<!-- ══════════════════════════════════
+     شاشة اختيار الدور
+══════════════════════════════════ -->
+<div id="roleScreen">
+  <div class="role-logo">
+    <div class="shield">🏥</div>
+    <h1>NCDC — إدارة التطعيمات</h1>
+    <p>المركز الوطني لمكافحة الأمراض<br>منصة البريد الرسمي</p>
+  </div>
+  <div class="role-cards">
+    <div class="role-card manager" onclick="goToManager()">
+      <div class="role-icon m">🛡️</div>
+      <div class="role-info">
+        <strong>دخول المدير</strong>
+        <span>متابعة المراسلات وتعديل الحالات<br>وعرض جميع البريد الوارد والصادر</span>
+      </div>
+      <span class="role-arrow">›</span>
+    </div>
+    <div class="role-card employee" onclick="goToEmployee()">
+      <div class="role-icon e">👤</div>
+      <div class="role-info">
+        <strong>دخول الموظف</strong>
+        <span>إنشاء مراسلة جديدة وإرفاق الصور<br>ومتابعة حالة مراسلاتك</span>
+      </div>
+      <span class="role-arrow">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     شاشة دخول المدير
+══════════════════════════════════ -->
+<div id="managerLoginScreen" class="center hide">
   <div class="login">
     <div class="logo">🛡️</div>
     <div class="title">لوحة المدير</div>
@@ -159,13 +258,44 @@
     <input id="pass" class="inp" type="password" placeholder="كلمة مرور المدير" autocomplete="current-password" />
     <button id="loginBtn" class="loginbtn" type="button">دخول المدير</button>
     <div id="loginErr" class="err hide">كلمة المرور غير صحيحة</div>
+    <button class="backbtn" onclick="backToRole()">← رجوع</button>
   </div>
 </div>
 
-<!-- التطبيق -->
-<div id="app" class="hide">
+<!-- ══════════════════════════════════
+     شاشة دخول الموظف (بدون رقم سري)
+══════════════════════════════════ -->
+<div id="employeeLoginScreen" class="center hide">
+  <div class="login">
+    <div class="logo" style="background:rgba(34,197,94,.14)">👤</div>
+    <div class="title">دخول الموظف</div>
+    <div class="sub">المركز الوطني لمكافحة الأمراض<br>إدارة التطعيمات</div>
+    <input id="empName" class="inp" type="text" placeholder="اسمك الكامل" autocomplete="name" style="text-align:right" />
+    <div style="margin-top:10px">
+      <select id="empDept" class="select">
+        <option value="">— اختر القسم —</option>
+        <option value="إدارة التطعيمات">إدارة التطعيمات</option>
+        <option value="مكتب الاستقبال">مكتب الاستقبال</option>
+        <option value="قسم المتابعة">قسم المتابعة</option>
+        <option value="قسم الإحصاء">قسم الإحصاء</option>
+        <option value="الإدارة العامة">الإدارة العامة</option>
+        <option value="قسم المستودع">قسم المستودع</option>
+        <option value="قسم آخر">قسم آخر</option>
+      </select>
+    </div>
+    <div id="empOtherWrap" class="hide" style="margin-top:8px">
+      <input id="empOtherDept" class="inp" type="text" placeholder="اسم القسم" style="margin-top:0;text-align:right" />
+    </div>
+    <div id="empLoginErr" class="err hide">الرجاء إدخال اسمك واختيار القسم</div>
+    <button id="empLoginBtn" class="loginbtn green" type="button">دخول</button>
+    <button class="backbtn" onclick="backToRole()">← رجوع</button>
+  </div>
+</div>
 
-  <!-- بانر التثبيت Android -->
+<!-- ══════════════════════════════════
+     تطبيق المدير
+══════════════════════════════════ -->
+<div id="managerApp" class="hide">
   <div id="installBanner">
     <div class="ib-icon">📲</div>
     <div class="ib-text">
@@ -175,14 +305,11 @@
     <button id="installBtn" type="button">تثبيت</button>
     <button id="dismissInstall" type="button">✕</button>
   </div>
-
-  <!-- تلميح iOS -->
   <div id="iosHint">
     📱 لتثبيت التطبيق على iPhone أو iPad:<br>
     اضغط زر <strong>المشاركة ⬆️</strong> ثم اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong>
   </div>
 
-  <!-- الشريط العلوي -->
   <div class="top">
     <div class="topin">
       <div class="appicon">📬</div>
@@ -190,40 +317,31 @@
         <h1>لوحة المدير v10</h1>
         <p><span id="connDot" class="wait"></span><span id="conn">جاري الاتصال...</span></p>
       </div>
-      <button class="iconbtn" id="installIconBtn" title="تثبيت التطبيق" style="display:none">📲</button>
-      <button class="iconbtn" id="notifyBtn" title="تفعيل الإشعارات">🔔</button>
-      <button class="iconbtn" id="logoutBtn" title="خروج">↩</button>
+      <button class="iconbtn" id="installIconBtn" title="تثبيت" style="display:none">📲</button>
+      <button class="iconbtn" id="notifyBtn" title="إشعارات">🔔</button>
+      <button class="iconbtn" id="logoutBtn" title="خروج" onclick="logoutManager()">↩</button>
     </div>
   </div>
 
   <main class="wrap">
-    <!-- خطأ Firebase -->
     <div id="firebaseErrBanner" class="banner">
       <span id="firebaseErrMsg">تعذر الاتصال بـ Firebase</span>
       <button id="retryBtn" class="banner-btn" type="button">إعادة المحاولة</button>
     </div>
-
-    <!-- طلب الإشعارات -->
     <div id="notifBanner" class="banner">
       <span>🔔 فعّل الإشعارات لتصلك تنبيهات البريد الجديد فوراً</span>
       <button id="allowNotifBtn" class="banner-btn" type="button">تفعيل</button>
     </div>
-
-    <!-- الإحصائيات -->
     <div class="stats">
       <div class="stat"><div class="n" id="stActive">0</div><div class="l">وارد نشط</div></div>
       <div class="stat"><div class="n" id="stNew">0</div><div class="l">جديد</div></div>
       <div class="stat"><div class="n" id="stPending">0</div><div class="l">قيد المعالجة</div></div>
       <div class="stat"><div class="n" id="stDone">0</div><div class="l">منجز</div></div>
     </div>
-
-    <!-- البحث -->
     <div class="search">
       <input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم...">
       <button id="refreshBtn" type="button">↻</button>
     </div>
-
-    <!-- التبويبات -->
     <div class="tabs">
       <button class="tab on" data-filter="all">الكل</button>
       <button class="tab" data-filter="new">جديد</button>
@@ -231,14 +349,12 @@
       <button class="tab" data-filter="done">منجز</button>
       <button class="tab" data-filter="archive">الأرشيف</button>
     </div>
-
     <div id="list" class="loading">جاري تحميل البيانات...</div>
-    <div class="debug">v12 · PWA · Real-time · BG Watch · Sound · Viewer</div>
+    <div class="debug">v10 · PWA · Real-time · Manager+Employee</div>
   </main>
 
-  <!-- شريط التنقل السفلي -->
   <div class="bottom">
-    <div class="nav">
+    <div class="nav mgr">
       <button class="on" data-filter="all"><b>⌂</b>الرئيسية</button>
       <button data-filter="new"><b>●</b>الجديد</button>
       <button data-filter="pending"><b>⏳</b>قيد</button>
@@ -247,18 +363,114 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════
+     تطبيق الموظف
+══════════════════════════════════ -->
+<div id="empApp">
 
-<!-- عارض الصور والملفات -->
+  <div class="top">
+    <div class="topin">
+      <div class="appicon emp">👤</div>
+      <div class="head">
+        <h1 id="empTopName">موظف</h1>
+        <p id="empTopDept" style="color:#86efac;font-size:11px"></p>
+      </div>
+      <button class="iconbtn" onclick="logoutEmployee()" title="خروج">↩</button>
+    </div>
+  </div>
+
+  <!-- تبويب: نموذج مراسلة جديدة -->
+  <main class="wrap" id="empFormTab">
+    <div class="emp-form-card">
+      <h3>✉️ إنشاء مراسلة جديدة</h3>
+
+      <label class="field-label">نوع المراسلة *</label>
+      <select id="fType" class="field-select">
+        <option value="in">وارد</option>
+        <option value="out">صادر</option>
+      </select>
+
+      <label class="field-label">الموضوع *</label>
+      <input id="fSubject" class="field-inp" type="text" placeholder="موضوع المراسلة..." />
+
+      <label class="field-label">رقم المراسلة *</label>
+      <input id="fRef" class="field-inp" type="text" placeholder="مثال: 2025/123" />
+
+      <label class="field-label">التاريخ *</label>
+      <input id="fDate" class="field-inp" type="date" />
+
+      <label class="field-label">الجهة المُرسِلة / المُستقبِلة *</label>
+      <input id="fParty" class="field-inp" type="text" placeholder="اسم الجهة..." />
+
+      <label class="field-label">ملاحظات (اختياري)</label>
+      <textarea id="fNotes" class="field-inp" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
+    </div>
+
+    <!-- منطقة الصورة -->
+    <div class="emp-form-card">
+      <h3>📷 صورة / مرفق المراسلة</h3>
+
+      <div class="img-actions" style="margin-bottom:10px">
+        <button class="img-btn camera" onclick="triggerCamera()">📷 كاميرا</button>
+        <button class="img-btn gallery" onclick="triggerGallery()">🖼️ معرض الصور</button>
+      </div>
+
+      <input id="hiddenCameraInput" type="file" accept="image/*" capture="environment" />
+      <input id="hiddenFileInput" type="file" accept="image/*,application/pdf" />
+
+      <div id="imgPreviewWrap">
+        <img id="imgPreview" src="" alt="معاينة" />
+        <div class="img-actions" style="margin-top:10px">
+          <button class="img-btn" onclick="triggerCamera()" style="border-color:rgba(34,197,94,.4);color:#86efac">📷 تغيير</button>
+          <button class="img-btn remove" onclick="removeImage()">🗑️ حذف</button>
+        </div>
+        <div id="imgSizeTxt" style="font-size:11px;color:var(--mut);text-align:center;margin-top:6px"></div>
+      </div>
+
+      <div id="imgZoneEmpty">
+        <div class="img-zone" onclick="triggerGallery()">
+          <div class="iz-icon">📄</div>
+          <div class="iz-txt">لم يتم إرفاق صورة بعد</div>
+          <div class="iz-sub">اضغط لاختيار ملف أو استخدم أزرار الكاميرا أعلاه</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitMail()">
+      📤 إرسال المراسلة
+    </button>
+    <div style="height:20px"></div>
+  </main>
+
+  <!-- تبويب: مراسلاتي -->
+  <main class="wrap hide" id="empMyMailsTab">
+    <div style="margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px">📋 مراسلاتي</div>
+      <div style="font-size:12px;color:var(--mut)">المراسلات التي أرسلتها مع حالاتها</div>
+    </div>
+    <div id="myMailsList" class="loading">جاري التحميل...</div>
+  </main>
+
+  <div class="bottom">
+    <div class="nav emp">
+      <button class="on emp-nav" id="empNavNew" onclick="empSwitchTab('new')"><b>✉️</b>مراسلة جديدة</button>
+      <button id="empNavMy" onclick="empSwitchTab('my')"><b>📋</b>مراسلاتي</button>
+      <button onclick="logoutEmployee()"><b>↩</b>خروج</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ عارض الصور ══ -->
 <div id="imgViewer">
   <div id="imgViewerHead">
     <span id="imgViewerTitle">صورة المراسلة</span>
     <button class="vbtn vbtn-dl" id="imgViewerDl" type="button">⬇️ تحميل</button>
-    <button class="vbtn vbtn-close" id="imgViewerClose" type="button">✕ إغلاق</button>
+    <button class="vbtn vbtn-close" id="imgViewerClose" type="button">✕</button>
   </div>
   <div id="imgViewerBody"></div>
 </div>
 
-<!-- نافذة التفاصيل -->
+<!-- ══ نافذة تفاصيل المدير ══ -->
 <div id="detailsModal" class="modal">
   <div class="sheet">
     <div class="modalHead">
@@ -269,9 +481,17 @@
   </div>
 </div>
 
+<!-- ══ رسالة نجاح الإرسال ══ -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-circle">✓</div>
+  <div class="success-title">تم إرسال المراسلة!</div>
+  <div class="success-sub">وصلت مراسلتك بنجاح إلى المدير وستجد حالتها في تبويب "مراسلاتي"</div>
+  <button class="success-btn" onclick="closeSuccess()">حسناً</button>
+</div>
+
 <script>
 /* ══════════════════════════════════════════
-   NCDC Manager v10 — PWA + Firebase
+   NCDC — Manager + Employee v10
 ══════════════════════════════════════════ */
 const MANAGER_PASSWORD = '1821992';
 const COLLECTION_NAME  = 'mails';
@@ -290,6 +510,9 @@ let db=null, unsub=null, mails=[], filter='all', query='';
 let firstLoad=true, knownIds=new Set();
 let retryTimer=null, retryCount=0;
 let deferredInstallPrompt=null;
+let currentRole=null; // 'manager' | 'employee'
+let empInfo={name:'', dept:''};
+let attachedImageData=null, attachedImageName='';
 
 /* ══ Firebase ══ */
 function initFirebase(){
@@ -297,137 +520,292 @@ function initFirebase(){
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     return true;
-  }catch(e){
-    showFirebaseError('فشل تهيئة Firebase: '+e.message);
-    return false;
-  }
+  }catch(e){ return false; }
 }
 
-/* ══ Service Worker ══ */
+/* ══ SW ══ */
 async function registerSW(){
   if(!('serviceWorker' in navigator)) return;
-  try{
-    const reg = await navigator.serviceWorker.register('./sw.js', {scope:'./'});
-    console.log('[PWA] SW registered');
-    reg.addEventListener('updatefound', ()=>{
-      reg.installing?.addEventListener('statechange', e=>{
-        if(e.target.state==='installed' && navigator.serviceWorker.controller)
-          toast('يتوفر تحديث — أعد فتح التطبيق');
-      });
-    });
-  }catch(e){ console.warn('[PWA] SW failed:', e); }
+  try{ await navigator.serviceWorker.register('./sw.js',{scope:'./'});}catch(e){}
 }
 
 /* ══ PWA Install ══ */
 function setupInstall(){
-  const isIOS        = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                    || window.navigator.standalone === true;
+  const isIOS=(/iphone|ipad|ipod/i.test(navigator.userAgent));
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
   if(isStandalone) return;
-
-  if(isIOS){
-    setTimeout(()=>{ document.getElementById('iosHint')?.classList.add('show'); }, 1500);
-    return;
-  }
-
-  window.addEventListener('beforeinstallprompt', e=>{
-    e.preventDefault();
-    deferredInstallPrompt = e;
+  if(isIOS){ setTimeout(()=>document.getElementById('iosHint')?.classList.add('show'),1500); return; }
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault(); deferredInstallPrompt=e;
     document.getElementById('installBanner').classList.add('show');
-    document.getElementById('installIconBtn').style.display = '';
+    document.getElementById('installIconBtn').style.display='';
   });
-
-  window.addEventListener('appinstalled', ()=>{
+  window.addEventListener('appinstalled',()=>{
     document.getElementById('installBanner').classList.remove('show');
-    document.getElementById('installIconBtn').style.display = 'none';
-    deferredInstallPrompt = null;
-    toast('✓ تم تثبيت التطبيق بنجاح');
+    document.getElementById('installIconBtn').style.display='none';
+    deferredInstallPrompt=null; toast('✓ تم تثبيت التطبيق');
   });
 }
-
 async function doInstall(){
-  if(!deferredInstallPrompt){ toast('افتح الصفحة من Chrome لتتمكن من التثبيت', true); return; }
+  if(!deferredInstallPrompt){toast('افتح الصفحة من Chrome',true);return;}
   deferredInstallPrompt.prompt();
-  const result = await deferredInstallPrompt.userChoice;
-  if(result.outcome === 'accepted') toast('جاري تثبيت التطبيق...');
-  deferredInstallPrompt = null;
+  const r=await deferredInstallPrompt.userChoice;
+  if(r.outcome==='accepted') toast('جاري التثبيت...');
+  deferredInstallPrompt=null;
   document.getElementById('installBanner').classList.remove('show');
 }
 
 /* ══ الإشعارات ══ */
 async function requestNotify(){
-  if(!('Notification' in window)){ toast('المتصفح لا يدعم الإشعارات',true); return; }
-  const perm = await Notification.requestPermission();
-  if(perm==='granted'){
-    toast('✓ تم تفعيل الإشعارات — تصلك حتى لو التطبيق مغلق');
+  if(!('Notification' in window)){toast('المتصفح لا يدعم الإشعارات',true);return;}
+  const p=await Notification.requestPermission();
+  if(p==='granted'){
+    toast('✓ تم تفعيل الإشعارات');
     document.getElementById('notifBanner').classList.remove('show');
-    startBgWatch();
-    sendNotification('NCDC مدير ✓','ستصلك إشعارات البريد الجديد فوراً');
-  } else {
-    toast('لم يتم السماح بالإشعارات — تحقق من إعدادات المتصفح', true);
-  }
+    sendNotification('NCDC ✓','ستصلك إشعارات البريد الجديد');
+  }else{ toast('لم يتم السماح بالإشعارات',true);}
 }
-
-function sendNotification(title, body, tag='ncdc'){
-  if(!('Notification' in window) || Notification.permission !== 'granted') return;
-  if(navigator.serviceWorker?.controller){
-    navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION', title, body, tag});
-    return;
-  }
-  try{ new Notification(title,{body, tag, renotify:true, icon:'./icon-192.png', dir:'rtl', lang:'ar'}); }catch(e){}
+function sendNotification(title,body,tag='ncdc'){
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  if(navigator.serviceWorker?.controller){navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION',title,body,tag});return;}
+  try{new Notification(title,{body,tag,renotify:true,icon:'./icon-192.png',dir:'rtl',lang:'ar'});}catch(e){}
 }
-
 function checkNotifBanner(){
-  if('Notification' in window && Notification.permission==='default')
+  if('Notification' in window&&Notification.permission==='default')
     document.getElementById('notifBanner').classList.add('show');
 }
 
 /* ══ حالة الاتصال ══ */
-function setConnStatus(state, text){
-  const dot = document.getElementById('connDot');
-  const con = document.getElementById('conn');
-  if(dot) dot.className = state;
-  if(con) con.textContent = text;
+function setConnStatus(state,text){
+  const dot=document.getElementById('connDot');
+  const con=document.getElementById('conn');
+  if(dot) dot.className=state;
+  if(con) con.textContent=text;
 }
 function showFirebaseError(msg){
-  const b = document.getElementById('firebaseErrBanner');
-  const m = document.getElementById('firebaseErrMsg');
-  if(m) m.textContent = msg || 'تعذر الاتصال بـ Firebase';
+  const b=document.getElementById('firebaseErrBanner');
+  const m=document.getElementById('firebaseErrMsg');
+  if(m) m.textContent=msg||'تعذر الاتصال بـ Firebase';
   if(b) b.classList.add('show');
   setConnStatus('err','غير متصل');
 }
-function hideFirebaseError(){ document.getElementById('firebaseErrBanner').classList.remove('show'); }
+function hideFirebaseError(){document.getElementById('firebaseErrBanner')?.classList.remove('show');}
 
-/* ══ الدخول والخروج ══ */
-function normDigits(s){
-  return String(s||'')
-    .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
-    .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();
+/* ══════════════════════
+   التنقل بين الشاشات
+══════════════════════ */
+function show(id){document.getElementById(id).classList.remove('hide');}
+function hide(id){document.getElementById(id).classList.add('hide');}
+function showOnly(...ids){
+  ['roleScreen','managerLoginScreen','employeeLoginScreen','managerApp','empApp']
+    .forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.style.display=ids.includes(id)?'':'none';
+    });
+  // empApp يستخدم display:block
+  if(ids.includes('empApp')) document.getElementById('empApp').style.display='block';
 }
-function login(){
-  const p = normDigits(document.getElementById('pass').value);
-  if(p !== MANAGER_PASSWORD){
+
+function goToManager(){
+  showOnly('managerLoginScreen');
+}
+function goToEmployee(){
+  showOnly('employeeLoginScreen');
+  // تعيين تاريخ اليوم تلقائياً
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('fDate').value=today;
+}
+function backToRole(){
+  showOnly('roleScreen');
+}
+
+/* ══ دخول المدير ══ */
+function normDigits(s){
+  return String(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();
+}
+function loginManager(){
+  const p=normDigits(document.getElementById('pass').value);
+  if(p!==MANAGER_PASSWORD){
     document.getElementById('loginErr').classList.remove('hide');
     return;
   }
   document.getElementById('loginErr').classList.add('hide');
-  document.getElementById('loginScreen').classList.add('hide');
-  document.getElementById('app').classList.remove('hide');
+  currentRole='manager';
+  showOnly('managerApp');
   checkNotifBanner();
   startListen();
   startBgWatch();
 }
-function logout(){
+function logoutManager(){
   stopListen();
-  document.getElementById('app').classList.add('hide');
-  document.getElementById('loginScreen').classList.remove('hide');
-  document.getElementById('pass').value = '';
+  showOnly('roleScreen');
+  document.getElementById('pass').value='';
   stopBgWatch();
   mails=[];firstLoad=true;knownIds=new Set();retryCount=0;
   hideFirebaseError();
+  currentRole=null;
 }
 
-/* ══ Firebase Listener ══ */
+/* ══ دخول الموظف ══ */
+function loginEmployee(){
+  const name=document.getElementById('empName').value.trim();
+  const deptEl=document.getElementById('empDept');
+  let dept=deptEl.value;
+  if(dept==='قسم آخر') dept=document.getElementById('empOtherDept').value.trim();
+  if(!name||!dept){
+    document.getElementById('empLoginErr').classList.remove('hide');
+    return;
+  }
+  document.getElementById('empLoginErr').classList.add('hide');
+  empInfo={name,dept};
+  currentRole='employee';
+  document.getElementById('empTopName').textContent=name;
+  document.getElementById('empTopDept').textContent=dept;
+  showOnly('empApp');
+  if(!db) initFirebase();
+  loadMyMails();
+}
+function logoutEmployee(){
+  showOnly('roleScreen');
+  document.getElementById('empName').value='';
+  document.getElementById('empDept').value='';
+  attachedImageData=null; attachedImageName='';
+  resetForm();
+  currentRole=null;
+}
+
+/* ══ الموظف: التبويبات ══ */
+function empSwitchTab(tab){
+  const fTab=document.getElementById('empFormTab');
+  const mTab=document.getElementById('empMyMailsTab');
+  const btnNew=document.getElementById('empNavNew');
+  const btnMy=document.getElementById('empNavMy');
+  if(tab==='new'){
+    fTab.classList.remove('hide'); mTab.classList.add('hide');
+    btnNew.classList.add('on','emp-nav'); btnMy.classList.remove('on','emp-nav');
+  } else {
+    fTab.classList.add('hide'); mTab.classList.remove('hide');
+    btnNew.classList.remove('on','emp-nav'); btnMy.classList.add('on','emp-nav');
+    loadMyMails();
+  }
+}
+
+/* ══ الصورة ══ */
+function triggerCamera(){document.getElementById('hiddenCameraInput').click();}
+function triggerGallery(){document.getElementById('hiddenFileInput').click();}
+
+function handleFileSelected(file){
+  if(!file) return;
+  const maxMB=8;
+  if(file.size>maxMB*1024*1024){toast('حجم الملف كبير — الحد الأقصى '+maxMB+' MB',true);return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    attachedImageData=e.target.result;
+    attachedImageName=file.name;
+    document.getElementById('imgPreview').src=attachedImageData;
+    document.getElementById('imgPreviewWrap').style.display='block';
+    document.getElementById('imgZoneEmpty').style.display='none';
+    const kb=Math.round(file.size/1024);
+    document.getElementById('imgSizeTxt').textContent='الحجم: '+(kb>1024?(kb/1024).toFixed(1)+' MB':kb+' KB')+' — '+file.name;
+    toast('✓ تم إرفاق الصورة');
+  };
+  reader.readAsDataURL(file);
+}
+function removeImage(){
+  attachedImageData=null; attachedImageName='';
+  document.getElementById('imgPreviewWrap').style.display='none';
+  document.getElementById('imgZoneEmpty').style.display='block';
+  document.getElementById('hiddenFileInput').value='';
+  document.getElementById('hiddenCameraInput').value='';
+  toast('تم حذف الصورة');
+}
+
+document.getElementById('hiddenCameraInput').addEventListener('change',e=>handleFileSelected(e.target.files[0]));
+document.getElementById('hiddenFileInput').addEventListener('change',e=>handleFileSelected(e.target.files[0]));
+
+/* ══ إرسال المراسلة (موظف) ══ */
+async function submitMail(){
+  const subject=document.getElementById('fSubject').value.trim();
+  const ref=document.getElementById('fRef').value.trim();
+  const date=document.getElementById('fDate').value.trim();
+  const party=document.getElementById('fParty').value.trim();
+  const notes=document.getElementById('fNotes').value.trim();
+  const type=document.getElementById('fType').value;
+  if(!subject||!ref||!date||!party){
+    toast('الرجاء تعبئة جميع الحقول المطلوبة *',true);
+    return;
+  }
+  if(!db){initFirebase();}
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='جاري الإرسال...';
+  try{
+    const doc={
+      type, subject, ref, date, party, notes,
+      from: empInfo.name,
+      dept: empInfo.dept,
+      status:'new',
+      archived:false,
+      source:'employee-mobile',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if(attachedImageData) doc.img=attachedImageData;
+    await db.collection(COLLECTION_NAME).add(doc);
+    document.getElementById('successOverlay').classList.add('show');
+    resetForm();
+  }catch(e){
+    toast('خطأ في الإرسال: '+(e.message||e.code),true);
+  }
+  btn.disabled=false; btn.textContent='📤 إرسال المراسلة';
+}
+
+function resetForm(){
+  document.getElementById('fSubject').value='';
+  document.getElementById('fRef').value='';
+  document.getElementById('fParty').value='';
+  document.getElementById('fNotes').value='';
+  document.getElementById('fType').value='in';
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('fDate').value=today;
+  removeImage();
+}
+
+function closeSuccess(){
+  document.getElementById('successOverlay').classList.remove('show');
+  empSwitchTab('my');
+}
+
+/* ══ مراسلاتي (موظف) ══ */
+async function loadMyMails(){
+  if(!db){initFirebase();}
+  const el=document.getElementById('myMailsList');
+  el.className='loading'; el.textContent='جاري التحميل...';
+  try{
+    const snap=await db.collection(COLLECTION_NAME)
+      .where('from','==',empInfo.name)
+      .orderBy('createdAt','desc')
+      .get();
+    if(snap.empty){el.className='empty';el.textContent='لا توجد مراسلات مُرسَلة بعد';return;}
+    const items=snap.docs.map(d=>({id:d.id,...d.data()}));
+    el.className='';
+    el.innerHTML=items.map(m=>`
+      <div class="my-mail-card">
+        <div class="my-mail-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span class="badge type">${m.type==='out'?'صادر':'وارد'}</span>
+            <span class="my-status ${m.status==='pending'?'ms-pending':m.status==='done'?'ms-done':'ms-new'}">${m.status==='pending'?'قيد المعالجة':m.status==='done'?'✓ منجز':'جديد'}</span>
+          </div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:6px">${esc(m.subject||'—')}</div>
+          <div style="font-size:12px;color:var(--mut);line-height:1.8">الرقم: ${esc(m.ref||'—')}<br>الجهة: ${esc(m.party||'—')}<br>التاريخ: ${esc(m.date||'—')}</div>
+          ${m.img?`<div style="margin-top:10px"><img src="${m.img}" style="width:100%;border-radius:12px;border:1px solid var(--line)" alt="صورة" onclick="openViewer('${escAttr(m.img)}','${escAttr(m.subject||'صورة')}',false)" /></div>`:''}
+        </div>
+      </div>`).join('');
+  }catch(e){
+    el.className='empty';
+    el.textContent='تعذر التحميل: '+(e.message||e.code);
+  }
+}
+
+/* ══ Firebase Listener (مدير) ══ */
 function stopListen(){
   if(unsub){unsub();unsub=null;}
   if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
@@ -437,60 +815,45 @@ function startListen(){
   if(!db){if(!initFirebase())return;}
   setConnStatus('wait','جاري الاتصال بـ Firebase...');
   try{
-    unsub = db.collection(COLLECTION_NAME)
-              .orderBy('createdAt','desc')
-              .onSnapshot(
+    unsub=db.collection(COLLECTION_NAME).orderBy('createdAt','desc').onSnapshot(
       snap=>{
-        hideFirebaseError();
-        retryCount=0;
-        const incoming = snap.docs.map(d=>({id:d.id,...d.data()}));
-        const newOnes  = incoming.filter(m=>!knownIds.has(m.id));
-        mails = incoming;
-        render();
+        hideFirebaseError(); retryCount=0;
+        const incoming=snap.docs.map(d=>({id:d.id,...d.data()}));
+        const newOnes=incoming.filter(m=>!knownIds.has(m.id));
+        mails=incoming; render();
         if(firstLoad){
-          knownIds=new Set(mails.map(m=>m.id));
-          firstLoad=false;
-          setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً');
-          return;
+          knownIds=new Set(mails.map(m=>m.id)); firstLoad=false;
+          setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً'); return;
         }
         if(newOnes.length){
           knownIds=new Set(mails.map(m=>m.id));
           setConnStatus('ok','تم استلام تحديث جديد ✓');
-          setTimeout(()=>setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً'),3000);
-          const m = newOnes[0];
-          toast('وصل بريد جديد 📬');
-          playNotifSound();
-          sendNotification(
-            'وصل بريد جديد 📬',
-            (m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''),
-            'ncdc-'+m.id
-          );
+          setTimeout(()=>setConnStatus('ok','متصل'),3000);
+          const m=newOnes[0];
+          toast('وصل بريد جديد 📬'); playNotifSound();
+          sendNotification('وصل بريد جديد 📬',(m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''),'ncdc-'+m.id);
           try{if(navigator.vibrate)navigator.vibrate([180,80,180]);}catch(e){}
-        } else {
-          setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً');
-        }
+        } else { setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً'); }
       },
       err=>{
-        console.error('Firestore error:',err);
         unsub=null;
         let msg='تعذر الاتصال بـ Firebase';
-        if(err.code==='permission-denied') msg='خطأ في صلاحيات Firebase — تحقق من Rules';
-        else if(err.code==='unavailable')  msg='Firebase غير متاح — تحقق من الإنترنت';
-        else if(err.code==='unauthenticated') msg='Firebase: غير مصرح';
+        if(err.code==='permission-denied') msg='خطأ في صلاحيات Firebase';
+        else if(err.code==='unavailable') msg='Firebase غير متاح — تحقق من الإنترنت';
         showFirebaseError(msg);
         retryCount++;
         const delay=Math.min(RETRY_DELAY_MS*retryCount,30000);
         setConnStatus('wait',`إعادة المحاولة خلال ${Math.round(delay/1000)} ث...`);
         retryTimer=setTimeout(()=>{
-          if(!document.getElementById('app').classList.contains('hide')) startListen();
+          if(currentRole==='manager') startListen();
         },delay);
       }
     );
-  }catch(e){ showFirebaseError('خطأ: '+e.message); }
+  }catch(e){showFirebaseError('خطأ: '+e.message);}
 }
 function refresh(){retryCount=0;startListen();toast('جاري إعادة التحميل...');}
 
-/* ══ عرض البيانات ══ */
+/* ══ عرض البيانات (مدير) ══ */
 function setFilter(f){
   filter=f;
   document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x.dataset.filter===f));
@@ -503,7 +866,6 @@ function badge(s){
   if(s==='done')    return'<span class="badge done">منجز</span>';
   return'<span class="badge arch">الأرشيف</span>';
 }
-function arType(t){return t==='out'?'صادر':'وارد';}
 
 function render(){
   const active=mails.filter(m=>m.type==='in'&&!m.archived).length;
@@ -514,44 +876,46 @@ function render(){
   document.getElementById('stNew').textContent=nw;
   document.getElementById('stPending').textContent=pe;
   document.getElementById('stDone').textContent=dn;
-
   let arr=[...mails];
-  if(filter==='archive')  arr=arr.filter(m=>m.archived);
+  if(filter==='archive') arr=arr.filter(m=>m.archived);
   else if(filter!=='all') arr=arr.filter(m=>!m.archived&&getStatus(m)===filter);
-  else                    arr=arr.filter(m=>!m.archived);
-
+  else arr=arr.filter(m=>!m.archived);
   const q=query.trim().toLowerCase();
-  if(q) arr=arr.filter(m=>[m.subject,m.party,m.from,m.ref,m.notes,m.date].join(' ').toLowerCase().includes(q));
-
+  if(q) arr=arr.filter(m=>[m.subject,m.party,m.from,m.ref,m.notes,m.date,m.dept].join(' ').toLowerCase().includes(q));
   const list=document.getElementById('list');
   if(!arr.length){list.className='empty';list.textContent='لا توجد مراسلات مطابقة';return;}
-
   list.className='';
   list.innerHTML=arr.map(m=>`
     <section class="card">
       <div class="cardbody">
-        <div class="row"><span class="badge type">${arType(m.type)}</span>${badge(getStatus(m))}</div>
+        <div class="row">
+          <span class="badge type">${m.type==='out'?'صادر':'وارد'}</span>
+          ${badge(getStatus(m))}
+          ${m.source==='employee-mobile'?'<span class="badge emp-badge">👤 موظف</span>':''}
+        </div>
         <div class="subject">${esc(m.subject||'بدون موضوع')}</div>
-        <div class="meta">الرقم: ${esc(m.ref||'غير محدد')}<br>الجهة: ${esc(m.party||m.from||'غير محدد')}<br>التاريخ: ${esc(m.date||'غير محدد')}</div>
+        <div class="meta">الرقم: ${esc(m.ref||'غير محدد')}<br>الجهة: ${esc(m.party||m.from||'غير محدد')}<br>التاريخ: ${esc(m.date||'غير محدد')}${m.from?'<br>المُرسِل: '+esc(m.from)+(m.dept?' ('+esc(m.dept)+')':''):''}
+        </div>
       </div>
       <div class="actions"><button class="smallbtn openDetailsBtn" type="button" data-id="${escAttr(m.id)}">عرض المراسلة / تعديل الحالة</button></div>
     </section>`).join('');
 }
 
-/* ══ تفاصيل المراسلة ══ */
-function firstExisting(m,keys){for(const k of keys){if(m[k])return m[k];}return '';}
+/* ══ تفاصيل المراسلة (مدير) ══ */
+function firstExisting(m,keys){for(const k of keys){if(m[k])return m[k];}return'';}
 
 function openDetails(id){
   const m=mails.find(x=>String(x.id)===String(id));
   if(!m){toast('لم يتم العثور على المراسلة',true);return;}
   const st=getStatus(m);
-  const att=firstExisting(m,['att','attachmentUrl','pdfUrl','fileUrl','scanUrl','file','url','uploadedFileUrl','attachment','documentUrl']);
-  const img=firstExisting(m,['img','imageUrl','image','photoUrl','scanImageUrl','attachmentImageUrl','imageData','photo','scan']);
+  const att=firstExisting(m,['att','attachmentUrl','pdfUrl','fileUrl','file','url','attachment','documentUrl']);
+  const img=firstExisting(m,['img','imageUrl','image','photoUrl','scan','photo']);
   document.getElementById('modalContent').innerHTML=`
     <div class="drow"><b>الموضوع</b><span>${esc(m.subject||'—')}</span></div>
     <div class="drow"><b>الرقم</b><span>${esc(m.ref||'—')}</span></div>
     <div class="drow"><b>التاريخ</b><span>${esc(m.date||'—')}</span></div>
     <div class="drow"><b>الجهة</b><span>${esc(m.party||m.from||'—')}</span></div>
+    ${m.from?`<div class="drow"><b>المُرسِل</b><span>${esc(m.from)}${m.dept?' — '+esc(m.dept):''}</span></div>`:''}
     <div class="drow"><b>الحالة</b><span id="currentStatusBadge">${badge(st)}</span></div>
     ${m.notes?`<div class="drow"><b>ملاحظات</b><span>${esc(m.notes)}</span></div>`:''}
     <div class="statusBox">
@@ -564,12 +928,12 @@ function openDetails(id){
       </select>
     </div>
     <div class="modalactions">
-      ${att?`<button class="smallbtn" type="button" onclick="openViewer('${escAttr(att)}','${escAttr(m.attName||m.ref||'ملف')}',true)">📄 فتح الملف / PDF</button>`
+      ${att?`<button class="smallbtn" type="button" onclick="openViewer('${escAttr(att)}','${escAttr(m.ref||'ملف')}',true)">📄 فتح الملف</button>`
            :'<button class="smallbtn disabled" type="button">لا يوجد ملف</button>'}
-      ${img?`<button class="smallbtn" type="button" onclick="openViewer('${escAttr(img)}','${escAttr(m.imgName||m.subject||'صورة')}',false)">🖼️ فتح الصورة</button>`
+      ${img?`<button class="smallbtn" type="button" onclick="openViewer('${escAttr(img)}','${escAttr(m.subject||'صورة')}',false)">🖼️ فتح الصورة</button>`
            :'<button class="smallbtn disabled" type="button">لا توجد صورة</button>'}
     </div>
-    ${img?`<div class="preview" style="cursor:pointer" onclick="openViewer('${escAttr(img)}','${escAttr(m.imgName||m.subject||'صورة')}',false)"><img src="${escAttr(img)}" alt="صورة المراسلة" onerror="this.parentElement.style.display='none'"><div style="text-align:center;padding:8px;font-size:12px;color:var(--mut)">اضغط لتكبير الصورة 🔍</div></div>`:''}`;
+    ${img?`<div class="preview" style="cursor:pointer" onclick="openViewer('${escAttr(img)}','${escAttr(m.subject||'صورة')}',false)"><img src="${escAttr(img)}" alt="صورة" onerror="this.parentElement.style.display='none'"><div style="text-align:center;padding:8px;font-size:12px;color:var(--mut)">اضغط لتكبير 🔍</div></div>`:''}`;
   document.getElementById('detailsModal').classList.add('show');
 }
 
@@ -587,10 +951,31 @@ async function changeStatus(id,val){
     const b=document.getElementById('currentStatusBadge');
     if(b) b.innerHTML=badge(getStatus({...m,status,archived}));
     toast('✓ تم تعديل الحالة');
-  }catch(e){ toast('خطأ: '+(e.code||e.message),true); }
+  }catch(e){toast('خطأ: '+(e.code||e.message),true);}
 }
 
-/* ══ أدوات مساعدة ══ */
+/* ══ BG Watch ══ */
+let bgTimer=null;
+function startBgWatch(){
+  if(bgTimer) return;
+  bgTimer=setInterval(async()=>{
+    if(!db||firstLoad) return;
+    try{
+      const snap=await db.collection(COLLECTION_NAME).where('status','==','new').where('archived','==',false).get();
+      const freshIds=new Set(snap.docs.map(d=>d.id));
+      const nw=[...freshIds].filter(id=>!knownIds.has(id));
+      if(nw.length){
+        nw.forEach(id=>knownIds.add(id));
+        const m=snap.docs.find(d=>d.id===nw[0])?.data()||{};
+        sendNotification('وصل بريد جديد 📬',(m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''));
+        playNotifSound();
+      }
+    }catch(e){}
+  },60000);
+}
+function stopBgWatch(){if(bgTimer){clearInterval(bgTimer);bgTimer=null;}}
+
+/* ══ أدوات ══ */
 function toast(msg,bad=false){
   const t=document.createElement('div');
   t.className='toast'+(bad?' bad':'');
@@ -601,21 +986,26 @@ function toast(msg,bad=false){
 function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));}
 function escAttr(s){return esc(s).replace(/`/g,'');}
 
-/* ══ الأحداث ══ */
+/* ══ الأحداث (مدير) ══ */
 document.addEventListener('click',e=>{
   const o=e.target.closest('.openDetailsBtn');
   if(o){openDetails(o.dataset.id);return;}
   const f=e.target.closest('[data-filter]');
-  if(f){setFilter(f.dataset.filter);return;}
+  if(f&&currentRole==='manager'){setFilter(f.dataset.filter);return;}
 });
 document.addEventListener('change',e=>{
   if(e.target?.id==='modalStatusSelect') changeStatus(e.target.dataset.id,e.target.value);
+  if(e.target?.id==='empDept'){
+    const v=e.target.value;
+    document.getElementById('empOtherWrap').classList.toggle('hide',v!=='قسم آخر');
+  }
 });
-document.getElementById('loginBtn').addEventListener('click',login);
-document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+document.getElementById('loginBtn').addEventListener('click',loginManager);
+document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')loginManager();});
+document.getElementById('empLoginBtn').addEventListener('click',loginEmployee);
+document.getElementById('empName').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('empDept').focus();});
 document.getElementById('notifyBtn').addEventListener('click',requestNotify);
 document.getElementById('allowNotifBtn').addEventListener('click',requestNotify);
-document.getElementById('logoutBtn').addEventListener('click',logout);
 document.getElementById('refreshBtn').addEventListener('click',refresh);
 document.getElementById('retryBtn').addEventListener('click',()=>{retryCount=0;hideFirebaseError();startListen();});
 document.getElementById('q').addEventListener('input',e=>{query=e.target.value;render();});
@@ -624,153 +1014,96 @@ document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target
 document.getElementById('installBtn').addEventListener('click',doInstall);
 document.getElementById('installIconBtn').addEventListener('click',doInstall);
 document.getElementById('dismissInstall').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
-document.getElementById('imgViewerClose').addEventListener('click', closeViewer);
-document.getElementById('imgViewerDl').addEventListener('click', downloadCurrent);
-document.getElementById('imgViewer').addEventListener('click', e=>{ if(e.target.id==='imgViewer') closeViewer(); });
+document.getElementById('imgViewerClose').addEventListener('click',closeViewer);
+document.getElementById('imgViewerDl').addEventListener('click',downloadCurrent);
+document.getElementById('imgViewer').addEventListener('click',e=>{if(e.target.id==='imgViewer')closeViewer();});
 
-
-/* ══ الصوت ══ */
+/* ══ صوت ══ */
 function playNotifSound(){
   try{
-    // نغمة تنبيه مُولَّدة بـ Web Audio API — بدون ملف خارجي
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function beep(freq, start, dur, vol=0.4){
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    function beep(freq,start,dur,vol=0.4){
+      const o=ctx.createOscillator(), g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = freq;
-      o.type = 'sine';
-      g.gain.setValueAtTime(0, ctx.currentTime + start);
-      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.01);
-      g.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur);
-      o.start(ctx.currentTime + start);
-      o.stop(ctx.currentTime + start + dur + 0.05);
+      o.frequency.value=freq; o.type='sine';
+      g.gain.setValueAtTime(0,ctx.currentTime+start);
+      g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);
+      g.gain.linearRampToValueAtTime(0,ctx.currentTime+start+dur);
+      o.start(ctx.currentTime+start); o.stop(ctx.currentTime+start+dur+0.05);
     }
-    
-    // نغمة تنبيه بريد — ثلاث نبضات صاعدة
-    beep(520, 0.0,  0.12, 0.5);
-    beep(660, 0.15, 0.12, 0.5);
-    beep(800, 0.30, 0.20, 0.6);
-  }catch(e){ console.warn('Sound error:', e); }
+    beep(520,0.0,0.12,0.5); beep(660,0.15,0.12,0.5); beep(800,0.30,0.20,0.6);
+  }catch(e){}
 }
-
-// استقبال أمر الصوت من Service Worker
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('message', e => {
-    if(e.data?.type === 'PLAY_SOUND') playNotifSound();
-  });
+  navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='PLAY_SOUND')playNotifSound();});
 }
 
-
-/* ══ عارض الصور والملفات ══ */
-let currentViewerSrc = '';
-let currentViewerName = '';
-
-function openViewer(src, name, isPDF){
-  if(!src){ toast('لا يوجد ملف للعرض', true); return; }
-  currentViewerSrc = src;
-  currentViewerName = name || (isPDF ? 'ملف.pdf' : 'صورة.jpg');
-  const body  = document.getElementById('imgViewerBody');
-  const title = document.getElementById('imgViewerTitle');
-  title.textContent = currentViewerName;
-  body.innerHTML = '';
-
-  const isBase64 = src.startsWith('data:');
-
+/* ══ عارض الصور ══ */
+let currentViewerSrc='', currentViewerName='';
+function openViewer(src,name,isPDF){
+  if(!src){toast('لا يوجد ملف للعرض',true);return;}
+  currentViewerSrc=src; currentViewerName=name||(isPDF?'ملف.pdf':'صورة.jpg');
+  const body=document.getElementById('imgViewerBody');
+  const title=document.getElementById('imgViewerTitle');
+  title.textContent=currentViewerName; body.innerHTML='';
+  const isBase64=src.startsWith('data:');
   if(isPDF){
     if(isBase64){
-      // PDF كـ Base64 — حوّله إلى Blob URL وافتحه
       try{
-        const b64 = src.split(',')[1];
-        const bin = atob(b64);
-        const arr = new Uint8Array(bin.length);
-        for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-        const blob = new Blob([arr], {type:'application/pdf'});
-        const blobUrl = URL.createObjectURL(blob);
-        body.innerHTML = `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:30px;text-align:center">
-            <div style="font-size:48px">📄</div>
-            <div style="font-size:15px;color:#f8fafc;font-weight:700">${name||'ملف PDF'}</div>
-            <div style="font-size:12px;color:#94a3b8">اضغط لفتح أو تحميل الملف</div>
-            <button onclick="window.open('${blobUrl}','_blank')" style="background:#3b82f6;color:white;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">
-              📂 فتح PDF
-            </button>
-            <button onclick="dlBlob('${blobUrl}','${name||'file.pdf'}')" style="background:rgba(34,197,94,.2);color:#86efac;border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:10px 20px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">
-              ⬇️ تحميل PDF
-            </button>
-          </div>`;
-      }catch(e){
-        body.innerHTML = '<div style="color:#fca5a5;text-align:center;padding:40px;font-size:14px">تعذر قراءة ملف PDF</div>';
-      }
-    } else {
-      // PDF بـ URL — استخدم Google Docs Viewer
-      const gdocsUrl = 'https://docs.google.com/viewer?url=' + encodeURIComponent(src) + '&embedded=true';
-      body.innerHTML = `
-        <div style="display:flex;flex-direction:column;width:100%;height:85vh;gap:8px">
-          <iframe src="${gdocsUrl}" style="flex:1;width:100%;border:none;border-radius:8px;background:#525659" allowfullscreen></iframe>
-          <div style="text-align:center;font-size:11px;color:#94a3b8;padding:4px">إذا لم يظهر الملف اضغط تحميل</div>
+        const b64=src.split(',')[1], bin=atob(b64), arr=new Uint8Array(bin.length);
+        for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+        const blob=new Blob([arr],{type:'application/pdf'}), blobUrl=URL.createObjectURL(blob);
+        body.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:30px;text-align:center">
+          <div style="font-size:48px">📄</div>
+          <div style="font-size:15px;color:#f8fafc;font-weight:700">${name||'ملف PDF'}</div>
+          <button onclick="window.open('${blobUrl}','_blank')" style="background:#3b82f6;color:white;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">📂 فتح PDF</button>
+          <button onclick="dlBlob('${blobUrl}','${name||'file.pdf'}')" style="background:rgba(34,197,94,.2);color:#86efac;border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:10px 20px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">⬇️ تحميل PDF</button>
         </div>`;
+      }catch(e){body.innerHTML='<div style="color:#fca5a5;text-align:center;padding:40px">تعذر قراءة ملف PDF</div>';}
+    } else {
+      const gdocsUrl='https://docs.google.com/viewer?url='+encodeURIComponent(src)+'&embedded=true';
+      body.innerHTML=`<div style="display:flex;flex-direction:column;width:100%;height:85vh;gap:8px"><iframe src="${gdocsUrl}" style="flex:1;width:100%;border:none;border-radius:8px;background:#525659"></iframe></div>`;
     }
   } else {
-    // صورة — عرض مباشر
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = name || 'صورة';
-    img.style.cssText = 'max-width:100%;max-height:85vh;object-fit:contain;border-radius:12px;display:block;margin:auto';
-    img.onerror = ()=>{
-      body.innerHTML = `
-        <div style="text-align:center;padding:40px">
-          <div style="font-size:40px;margin-bottom:12px">🖼️</div>
-          <div style="color:#fca5a5;font-size:14px;margin-bottom:16px">تعذر تحميل الصورة</div>
-          <button onclick="downloadCurrent()" style="background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">⬇️ تحميل الصورة</button>
-        </div>`;
-    };
+    const img=document.createElement('img');
+    img.src=src; img.alt=name||'صورة';
+    img.style.cssText='max-width:100%;max-height:85vh;object-fit:contain;border-radius:12px;display:block;margin:auto';
+    img.onerror=()=>{body.innerHTML='<div style="text-align:center;padding:40px"><div style="font-size:40px;margin-bottom:12px">🖼️</div><div style="color:#fca5a5;font-size:14px">تعذر تحميل الصورة</div></div>';};
     body.appendChild(img);
   }
-
   document.getElementById('imgViewer').classList.add('show');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
-
-function dlBlob(blobUrl, name){
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = name;
-  a.click();
-}
-
+function dlBlob(url,name){const a=document.createElement('a');a.href=url;a.download=name;a.click();}
 function closeViewer(){
   document.getElementById('imgViewer').classList.remove('show');
-  document.getElementById('imgViewerBody').innerHTML = '';
-  document.body.style.overflow = '';
-  currentViewerSrc = '';
+  document.getElementById('imgViewerBody').innerHTML='';
+  document.body.style.overflow='';
+  currentViewerSrc='';
 }
-
 function downloadCurrent(){
   if(!currentViewerSrc) return;
-  const name = currentViewerName || document.getElementById('imgViewerTitle').textContent || 'ncdc-attachment';
+  const name=currentViewerName||'ncdc-attachment';
   if(currentViewerSrc.startsWith('data:')){
-    // Base64 — حوّل إلى Blob
     try{
-      const mime = currentViewerSrc.split(';')[0].split(':')[1];
-      const b64  = currentViewerSrc.split(',')[1];
-      const bin  = atob(b64);
-      const arr  = new Uint8Array(bin.length);
-      for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-      const blob = new Blob([arr],{type:mime});
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href=url; a.download=name; a.click();
+      const mime=currentViewerSrc.split(';')[0].split(':')[1], b64=currentViewerSrc.split(',')[1];
+      const bin=atob(b64), arr=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+      const blob=new Blob([arr],{type:mime}), url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=name; a.click();
       setTimeout(()=>URL.revokeObjectURL(url),3000);
-    }catch(e){ toast('تعذر التحميل',true); }
-  } else {
-    const a = document.createElement('a');
-    a.href=currentViewerSrc; a.download=name; a.click();
-  }
+    }catch(e){toast('تعذر التحميل',true);}
+  } else {const a=document.createElement('a');a.href=currentViewerSrc;a.download=name;a.click();}
 }
 
-/* ══ تشغيل ══ */
+/* ══ تهيئة ══ */
+// أظهر شاشة الاختيار فقط في البداية
+document.getElementById('managerApp').style.display='none';
+document.getElementById('empApp').style.display='none';
+document.getElementById('managerLoginScreen').style.display='none';
+document.getElementById('employeeLoginScreen').style.display='none';
+document.getElementById('roleScreen').style.display='flex';
+
 initFirebase();
 registerSW();
 setupInstall();
