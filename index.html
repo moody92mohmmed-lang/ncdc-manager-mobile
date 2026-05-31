@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -133,6 +132,19 @@
     .preview{margin-top:10px;background:#020617;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
     .preview img{display:block;width:100%;height:auto}
     .debug{font-size:11px;color:#475569;text-align:center;margin-top:10px;padding-bottom:4px}
+
+    /* IMAGE VIEWER */
+    #imgViewer{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:200;display:none;flex-direction:column}
+    #imgViewer.show{display:flex}
+    #imgViewerHead{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(15,23,42,.9);flex-shrink:0}
+    #imgViewerTitle{flex:1;font-size:14px;font-weight:700;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #imgViewerBody{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:12px}
+    #imgViewerBody img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
+    #imgViewerBody iframe{width:100%;height:100%;border:none;border-radius:8px;background:#525659}
+    .vbtn{border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;gap:5px}
+    .vbtn-close{background:rgba(239,68,68,.2);color:#fca5a5}
+    .vbtn-dl{background:rgba(34,197,94,.15);color:#86efac}
+
   </style>
 </head>
 <body>
@@ -232,6 +244,17 @@
       <button data-filter="archive"><b>🗄️</b>الأرشيف</button>
     </div>
   </div>
+</div>
+
+
+<!-- عارض الصور والملفات -->
+<div id="imgViewer">
+  <div id="imgViewerHead">
+    <span id="imgViewerTitle">صورة المراسلة</span>
+    <button class="vbtn vbtn-dl" id="imgViewerDl" type="button">⬇️ تحميل</button>
+    <button class="vbtn vbtn-close" id="imgViewerClose" type="button">✕ إغلاق</button>
+  </div>
+  <div id="imgViewerBody"></div>
 </div>
 
 <!-- نافذة التفاصيل -->
@@ -540,12 +563,12 @@ function openDetails(id){
       </select>
     </div>
     <div class="modalactions">
-      ${att?`<a class="smallbtn" href="${escAttr(att)}" target="_blank" rel="noopener">فتح الملف / PDF</a>`
+      ${att?`<button class="smallbtn" type="button" onclick="openViewer('${escAttr(att)}','${escAttr(m.attName||m.ref||'ملف')}',true)">📄 فتح الملف / PDF</button>`
            :'<button class="smallbtn disabled" type="button">لا يوجد ملف</button>'}
-      ${img?`<a class="smallbtn" href="${escAttr(img)}" target="_blank" rel="noopener">فتح الصورة</a>`
+      ${img?`<button class="smallbtn" type="button" onclick="openViewer('${escAttr(img)}','${escAttr(m.imgName||m.subject||'صورة')}',false)">🖼️ فتح الصورة</button>`
            :'<button class="smallbtn disabled" type="button">لا توجد صورة</button>'}
     </div>
-    ${img?`<div class="preview"><img src="${escAttr(img)}" alt="صورة المراسلة" onerror="this.parentElement.style.display='none'"></div>`:''}`;
+    ${img?`<div class="preview" style="cursor:pointer" onclick="openViewer('${escAttr(img)}','${escAttr(m.imgName||m.subject||'صورة')}',false)"><img src="${escAttr(img)}" alt="صورة المراسلة" onerror="this.parentElement.style.display='none'"><div style="text-align:center;padding:8px;font-size:12px;color:var(--mut)">اضغط لتكبير الصورة 🔍</div></div>`:''}`;
   document.getElementById('detailsModal').classList.add('show');
 }
 
@@ -600,6 +623,9 @@ document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target
 document.getElementById('installBtn').addEventListener('click',doInstall);
 document.getElementById('installIconBtn').addEventListener('click',doInstall);
 document.getElementById('dismissInstall').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
+document.getElementById('imgViewerClose').addEventListener('click', closeViewer);
+document.getElementById('imgViewerDl').addEventListener('click', downloadCurrent);
+document.getElementById('imgViewer').addEventListener('click', e=>{ if(e.target.id==='imgViewer') closeViewer(); });
 
 
 /* ══ الصوت ══ */
@@ -633,6 +659,50 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.addEventListener('message', e => {
     if(e.data?.type === 'PLAY_SOUND') playNotifSound();
   });
+}
+
+
+/* ══ عارض الصور والملفات ══ */
+let currentViewerSrc = '';
+
+function openViewer(src, name, isPDF){
+  if(!src){ toast('لا يوجد ملف للعرض', true); return; }
+  currentViewerSrc = src;
+  const body = document.getElementById('imgViewerBody');
+  const title = document.getElementById('imgViewerTitle');
+  title.textContent = name || (isPDF ? 'ملف PDF' : 'صورة المراسلة');
+  body.innerHTML = '';
+  if(isPDF){
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.style.cssText = 'width:100%;height:85vh;border:none;border-radius:8px;background:#525659';
+    body.appendChild(iframe);
+  } else {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = name || 'صورة';
+    img.style.cssText = 'max-width:100%;max-height:85vh;object-fit:contain;border-radius:12px;display:block;margin:auto';
+    img.onerror = () => { body.innerHTML = '<div style="color:#fca5a5;text-align:center;padding:40px">تعذر تحميل الصورة</div>'; };
+    body.appendChild(img);
+  }
+  document.getElementById('imgViewer').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeViewer(){
+  document.getElementById('imgViewer').classList.remove('show');
+  document.getElementById('imgViewerBody').innerHTML = '';
+  document.body.style.overflow = '';
+  currentViewerSrc = '';
+}
+
+function downloadCurrent(){
+  if(!currentViewerSrc) return;
+  const a = document.createElement('a');
+  a.href = currentViewerSrc;
+  const title = document.getElementById('imgViewerTitle').textContent;
+  a.download = title || 'ncdc-attachment';
+  a.click();
 }
 
 /* ══ تشغيل ══ */
