@@ -1,6 +1,6 @@
+
 // ════════════════════════════════════════
-//  NCDC — firebase-messaging-sw.js
-//  هذا الملف مطلوب من Firebase تحديداً
+//  NCDC — firebase-messaging-sw.js v2
 // ════════════════════════════════════════
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
@@ -16,35 +16,41 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// ── استقبال الإشعارات عندما التطبيق في الخلفية أو مغلق ──
+// ── استقبال الإشعارات في الخلفية ──
 messaging.onBackgroundMessage(payload => {
-  console.log('[FCM-SW] Background message:', payload);
+  console.log('[FCM-SW] Background message received:', payload);
 
-  const title = payload.notification?.title || 'NCDC — بريد جديد 📬';
-  const body  = payload.notification?.body  || 'وصلت مراسلة جديدة';
+  const title = payload.notification?.title
+             || payload.data?.title
+             || 'NCDC — بريد جديد 📬';
+  const body  = payload.notification?.body
+             || payload.data?.body
+             || 'وصلت مراسلة جديدة';
 
-  self.registration.showNotification(title, {
+  return self.registration.showNotification(title, {
     body,
-    icon:     './icon-192.png',
-    badge:    './icon-96.png',
+    icon:     '/ncdc-manager-mobile/icon-192.png',
+    badge:    '/ncdc-manager-mobile/icon-96.png',
     tag:      'ncdc-mail',
     renotify: true,
     dir:      'rtl',
     lang:     'ar',
     vibrate:  [200, 100, 200],
-    data:     { url: './index.html' }
+    data:     { url: '/ncdc-manager-mobile/index.html' }
   });
 });
 
-// ── الضغط على الإشعار يفتح التطبيق ──
+// ── فتح التطبيق عند الضغط على الإشعار ──
 self.addEventListener('notificationclick', event => {
   event.notification.close();
+  const url = event.notification.data?.url
+           || '/ncdc-manager-mobile/index.html';
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      for (const c of list) {
-        if (c.url.includes('ncdc-manager') && 'focus' in c) return c.focus();
+    clients.matchAll({ type:'window', includeUncontrolled:true }).then(list => {
+      for(const c of list){
+        if(c.url.includes('ncdc-manager') && 'focus' in c) return c.focus();
       }
-      if (clients.openWindow) return clients.openWindow('./index.html');
+      if(clients.openWindow) return clients.openWindow(url);
     })
   );
 });
