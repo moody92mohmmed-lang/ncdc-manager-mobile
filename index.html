@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -16,6 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:Tajawal,Arial,sans-serif}
     :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:rgba(148,163,184,.2);--txt:#f8fafc;--mut:#94a3b8;--blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}
@@ -41,7 +43,7 @@
     .ib-text{flex:1}.ib-text strong{display:block;font-size:14px;font-weight:800;margin-bottom:2px}
     .ib-text span{font-size:12px;color:var(--mut)}
     #installBtn{background:var(--blue);color:white;border:none;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;white-space:nowrap}
-    #dismissInstall{background:transparent;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;line-height:1}
+    #dismissInstall{background:transparent;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px;flex-shrink:0}
 
     /* iOS HINT */
     #iosHint{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:14px;padding:12px 14px;margin:12px 14px 0;display:none;font-size:12px;color:#93c5fd;line-height:1.9;text-align:center}
@@ -65,7 +67,7 @@
     .banner{border-radius:14px;padding:11px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
     .banner.show{display:flex}
     .banner span{flex:1;font-size:13px;line-height:1.6}
-    .banner-btn{border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:Tajawal,sans-serif}
+    .banner-btn{border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:Tajawal,sans-serif;border:none}
     #firebaseErrBanner{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35)}
     #firebaseErrBanner span{color:#fca5a5}
     #retryBtn{background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
@@ -191,7 +193,7 @@
 
     <!-- طلب الإشعارات -->
     <div id="notifBanner" class="banner">
-      <span>🔔 فعّل الإشعارات لتصلك تنبيهات البريد الجديد فوراً</span>
+      <span>🔔 فعّل الإشعارات لتصلك تنبيهات البريد حتى لو التطبيق مغلق</span>
       <button id="allowNotifBtn" class="banner-btn" type="button">تفعيل</button>
     </div>
 
@@ -203,13 +205,11 @@
       <div class="stat"><div class="n" id="stDone">0</div><div class="l">منجز</div></div>
     </div>
 
-    <!-- البحث -->
     <div class="search">
       <input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم...">
       <button id="refreshBtn" type="button">↻</button>
     </div>
 
-    <!-- التبويبات -->
     <div class="tabs">
       <button class="tab on" data-filter="all">الكل</button>
       <button class="tab" data-filter="new">جديد</button>
@@ -219,10 +219,9 @@
     </div>
 
     <div id="list" class="loading">جاري تحميل البيانات...</div>
-    <div class="debug">v10 · PWA · Real-time Firebase</div>
+    <div class="debug">v10 · PWA · FCM · Real-time</div>
   </main>
 
-  <!-- شريط التنقل السفلي -->
   <div class="bottom">
     <div class="nav">
       <button class="on" data-filter="all"><b>⌂</b>الرئيسية</button>
@@ -233,7 +232,7 @@
   </div>
 </div>
 
-<!-- نافذة التفاصيل -->
+<!-- Modal -->
 <div id="detailsModal" class="modal">
   <div class="sheet">
     <div class="modalHead">
@@ -246,10 +245,12 @@
 
 <script>
 /* ══════════════════════════════════════════
-   NCDC Manager v10 — PWA + Firebase
+   NCDC Manager v10 — PWA + FCM
 ══════════════════════════════════════════ */
 const MANAGER_PASSWORD = '1821992';
 const COLLECTION_NAME  = 'mails';
+const FCM_TOKENS_COLL  = 'fcm_tokens';
+const VAPID_KEY        = 'BEDuajHrLsC8zTWPUvul7jarZZJP8oZj_Q5VzQZryktbIcWsSE1hLyuLXFCqHHqWoVfvu0Fh9mDn3PyxmxlTkr0';
 const RETRY_DELAY_MS   = 5000;
 
 const firebaseConfig = {
@@ -261,16 +262,18 @@ const firebaseConfig = {
   appId:             '1:197299236308:web:4205dd506cbc0148a53a41'
 };
 
-let db=null, unsub=null, mails=[], filter='all', query='';
+let db=null, messaging=null, unsub=null;
+let mails=[], filter='all', query='';
 let firstLoad=true, knownIds=new Set();
 let retryTimer=null, retryCount=0;
 let deferredInstallPrompt=null;
 
-/* ══ Firebase ══ */
+/* ══ Firebase Init ══ */
 function initFirebase(){
   try{
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
+    db        = firebase.firestore();
+    messaging = firebase.messaging();
     return true;
   }catch(e){
     showFirebaseError('فشل تهيئة Firebase: '+e.message);
@@ -280,17 +283,66 @@ function initFirebase(){
 
 /* ══ Service Worker ══ */
 async function registerSW(){
-  if(!('serviceWorker' in navigator)) return;
+  if(!('serviceWorker' in navigator)) return null;
   try{
     const reg = await navigator.serviceWorker.register('./sw.js', {scope:'./'});
     console.log('[PWA] SW registered');
-    reg.addEventListener('updatefound', ()=>{
-      reg.installing?.addEventListener('statechange', e=>{
-        if(e.target.state==='installed' && navigator.serviceWorker.controller)
-          toast('يتوفر تحديث — أعد فتح التطبيق');
+    return reg;
+  }catch(e){
+    console.warn('[PWA] SW failed:', e);
+    return null;
+  }
+}
+
+/* ══ FCM — تسجيل التوكن واستقبال الإشعارات في الخلفية ══ */
+async function setupFCM(){
+  if(!messaging) return;
+  try{
+    // طلب إذن الإشعارات
+    const perm = await Notification.requestPermission();
+    if(perm !== 'granted'){
+      toast('لم يتم السماح بالإشعارات — تحقق من إعدادات المتصفح', true);
+      return;
+    }
+
+    // الحصول على FCM Token
+    const token = await messaging.getToken({ vapidKey: VAPID_KEY });
+    if(token){
+      console.log('[FCM] Token:', token);
+      // حفظ التوكن في Firestore ليستخدمه السيرفر لإرسال الإشعارات
+      await db.collection(FCM_TOKENS_COLL).doc('manager').set({
+        token,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        device: navigator.userAgent.substring(0,100)
       });
+      toast('✓ تم تفعيل الإشعارات — ستصلك حتى لو التطبيق مغلق');
+      document.getElementById('notifBanner').classList.remove('show');
+    }
+
+    // استقبال الإشعارات عندما التطبيق مفتوح
+    messaging.onMessage(payload => {
+      console.log('[FCM] Foreground message:', payload);
+      const title = payload.notification?.title || 'بريد جديد 📬';
+      const body  = payload.notification?.body  || 'وصلت مراسلة جديدة';
+      toast(title+' — '+body);
+      try{ if(navigator.vibrate) navigator.vibrate([180,80,180]); }catch(e){}
     });
-  }catch(e){ console.warn('[PWA] SW failed:', e); }
+
+    // تحديث التوكن إذا تغيّر
+    messaging.onTokenRefresh(async ()=>{
+      const newToken = await messaging.getToken({ vapidKey: VAPID_KEY });
+      if(newToken && db){
+        await db.collection(FCM_TOKENS_COLL).doc('manager').set({
+          token: newToken,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    });
+
+  }catch(e){
+    console.error('[FCM] Error:', e);
+    toast('خطأ في تفعيل الإشعارات: '+e.message, true);
+  }
 }
 
 /* ══ PWA Install ══ */
@@ -301,7 +353,7 @@ function setupInstall(){
   if(isStandalone) return;
 
   if(isIOS){
-    setTimeout(()=>{ document.getElementById('iosHint')?.classList.add('show'); }, 1500);
+    setTimeout(()=>document.getElementById('iosHint')?.classList.add('show'), 1500);
     return;
   }
 
@@ -329,33 +381,6 @@ async function doInstall(){
   document.getElementById('installBanner').classList.remove('show');
 }
 
-/* ══ الإشعارات ══ */
-async function requestNotify(){
-  if(!('Notification' in window)){ toast('المتصفح لا يدعم الإشعارات',true); return; }
-  const perm = await Notification.requestPermission();
-  if(perm==='granted'){
-    toast('✓ تم تفعيل الإشعارات');
-    document.getElementById('notifBanner').classList.remove('show');
-    sendNotification('NCDC مدير ✓','ستصلك إشعارات البريد الجديد فوراً');
-  } else {
-    toast('لم يتم السماح بالإشعارات — تحقق من إعدادات المتصفح', true);
-  }
-}
-
-function sendNotification(title, body, tag='ncdc'){
-  if(!('Notification' in window) || Notification.permission !== 'granted') return;
-  if(navigator.serviceWorker?.controller){
-    navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION', title, body, tag});
-    return;
-  }
-  try{ new Notification(title,{body, tag, renotify:true, icon:'./icon-192.png', dir:'rtl', lang:'ar'}); }catch(e){}
-}
-
-function checkNotifBanner(){
-  if('Notification' in window && Notification.permission==='default')
-    document.getElementById('notifBanner').classList.add('show');
-}
-
 /* ══ حالة الاتصال ══ */
 function setConnStatus(state, text){
   const dot = document.getElementById('connDot');
@@ -364,10 +389,9 @@ function setConnStatus(state, text){
   if(con) con.textContent = text;
 }
 function showFirebaseError(msg){
-  const b = document.getElementById('firebaseErrBanner');
-  const m = document.getElementById('firebaseErrMsg');
-  if(m) m.textContent = msg || 'تعذر الاتصال بـ Firebase';
-  if(b) b.classList.add('show');
+  const b=document.getElementById('firebaseErrBanner');
+  document.getElementById('firebaseErrMsg').textContent = msg||'تعذر الاتصال بـ Firebase';
+  b?.classList.add('show');
   setConnStatus('err','غير متصل');
 }
 function hideFirebaseError(){ document.getElementById('firebaseErrBanner').classList.remove('show'); }
@@ -378,6 +402,7 @@ function normDigits(s){
     .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
     .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();
 }
+
 function login(){
   const p = normDigits(document.getElementById('pass').value);
   if(p !== MANAGER_PASSWORD){
@@ -387,9 +412,14 @@ function login(){
   document.getElementById('loginErr').classList.add('hide');
   document.getElementById('loginScreen').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
-  checkNotifBanner();
+
+  // إظهار بانر الإشعارات إذا لم يُفعَّل بعد
+  if('Notification' in window && Notification.permission === 'default')
+    document.getElementById('notifBanner').classList.add('show');
+
   startListen();
 }
+
 function logout(){
   stopListen();
   document.getElementById('app').classList.add('hide');
@@ -404,10 +434,12 @@ function stopListen(){
   if(unsub){unsub();unsub=null;}
   if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
 }
+
 function startListen(){
   stopListen();
   if(!db){if(!initFirebase())return;}
   setConnStatus('wait','جاري الاتصال بـ Firebase...');
+
   try{
     unsub = db.collection(COLLECTION_NAME)
               .orderBy('createdAt','desc')
@@ -419,23 +451,19 @@ function startListen(){
         const newOnes  = incoming.filter(m=>!knownIds.has(m.id));
         mails = incoming;
         render();
+
         if(firstLoad){
           knownIds=new Set(mails.map(m=>m.id));
           firstLoad=false;
           setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً');
           return;
         }
+
         if(newOnes.length){
           knownIds=new Set(mails.map(m=>m.id));
           setConnStatus('ok','تم استلام تحديث جديد ✓');
           setTimeout(()=>setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً'),3000);
-          const m = newOnes[0];
           toast('وصل بريد جديد 📬');
-          sendNotification(
-            'وصل بريد جديد 📬',
-            (m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''),
-            'ncdc-'+m.id
-          );
           try{if(navigator.vibrate)navigator.vibrate([180,80,180]);}catch(e){}
         } else {
           setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً');
@@ -445,9 +473,8 @@ function startListen(){
         console.error('Firestore error:',err);
         unsub=null;
         let msg='تعذر الاتصال بـ Firebase';
-        if(err.code==='permission-denied') msg='خطأ في صلاحيات Firebase — تحقق من Rules';
+        if(err.code==='permission-denied') msg='خطأ في صلاحيات Firebase';
         else if(err.code==='unavailable')  msg='Firebase غير متاح — تحقق من الإنترنت';
-        else if(err.code==='unauthenticated') msg='Firebase: غير مصرح';
         showFirebaseError(msg);
         retryCount++;
         const delay=Math.min(RETRY_DELAY_MS*retryCount,30000);
@@ -459,6 +486,7 @@ function startListen(){
     );
   }catch(e){ showFirebaseError('خطأ: '+e.message); }
 }
+
 function refresh(){retryCount=0;startListen();toast('جاري إعادة التحميل...');}
 
 /* ══ عرض البيانات ══ */
@@ -496,7 +524,6 @@ function render(){
 
   const list=document.getElementById('list');
   if(!arr.length){list.className='empty';list.textContent='لا توجد مراسلات مطابقة';return;}
-
   list.className='';
   list.innerHTML=arr.map(m=>`
     <section class="card">
@@ -567,7 +594,7 @@ function toast(msg,bad=false){
   t.className='toast'+(bad?' bad':'');
   t.textContent=msg;
   document.body.appendChild(t);
-  setTimeout(()=>t.remove(),2600);
+  setTimeout(()=>t.remove(),2800);
 }
 function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));}
 function escAttr(s){return esc(s).replace(/`/g,'');}
@@ -584,8 +611,8 @@ document.addEventListener('change',e=>{
 });
 document.getElementById('loginBtn').addEventListener('click',login);
 document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-document.getElementById('notifyBtn').addEventListener('click',requestNotify);
-document.getElementById('allowNotifBtn').addEventListener('click',requestNotify);
+document.getElementById('notifyBtn').addEventListener('click', setupFCM);
+document.getElementById('allowNotifBtn').addEventListener('click', setupFCM);
 document.getElementById('logoutBtn').addEventListener('click',logout);
 document.getElementById('refreshBtn').addEventListener('click',refresh);
 document.getElementById('retryBtn').addEventListener('click',()=>{retryCount=0;hideFirebaseError();startListen();});
