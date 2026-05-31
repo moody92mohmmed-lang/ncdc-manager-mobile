@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NCDC — تطبيق المدير للهاتف v8</title>
+  <title>NCDC — تطبيق المدير للهاتف v9</title>
   <meta name="theme-color" content="#0f172a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,7 +34,7 @@
     </div>
   </div>
   <div id="app" class="hide">
-    <div class="top"><div class="topin"><div class="appicon">📬</div><div class="head"><h1>لوحة المدير v8</h1><p id="conn">جاري الاتصال بـ Firebase...</p></div><button class="iconbtn" id="logoutBtn">↩</button></div></div>
+    <div class="top"><div class="topin"><div class="appicon">📬</div><div class="head"><h1>لوحة المدير v9</h1><p id="conn">جاري الاتصال بـ Firebase...</p></div><button class="iconbtn" id="notifyBtn" title="تفعيل الإشعارات">🔔</button><button class="iconbtn" id="logoutBtn">↩</button></div></div>
     <main class="wrap">
       <div class="stats"><div class="stat"><div class="n" id="stActive">0</div><div class="l">وارد نشط</div></div><div class="stat"><div class="n" id="stNew">0</div><div class="l">جديد</div></div><div class="stat"><div class="n" id="stPending">0</div><div class="l">قيد المعالجة</div></div><div class="stat"><div class="n" id="stDone">0</div><div class="l">منجز</div></div></div>
       <div class="search"><input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم..."><button id="refreshBtn" type="button">↻</button></div>
@@ -53,13 +53,49 @@
 const MANAGER_PASSWORD = "1821992";
 const COLLECTION_NAME = "mails";
 const firebaseConfig = {apiKey:"AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo",authDomain:"ncdc-mail-a68ff.firebaseapp.com",projectId:"ncdc-mail-a68ff",storageBucket:"ncdc-mail-a68ff.firebasestorage.app",messagingSenderId:"197299236308",appId:"1:197299236308:web:4205dd506cbc0148a53a41"};
-let db=null, unsub=null, mails=[], filter='all', query='';
+let db=null, unsub=null, mails=[], filter='all', query='', firstLoad=true, knownIds=new Set();
 try{ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); db=firebase.firestore(); }catch(e){ console.error(e); }
 function normDigits(s){return String(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();}
 function login(){ const p=normDigits(document.getElementById('pass').value); if(p!==MANAGER_PASSWORD){document.getElementById('loginErr').classList.remove('hide');return;} document.getElementById('loginErr').classList.add('hide'); document.getElementById('loginScreen').classList.add('hide'); document.getElementById('app').classList.remove('hide'); listen(); }
 function logout(){ if(unsub)unsub(); document.getElementById('app').classList.add('hide'); document.getElementById('loginScreen').classList.remove('hide'); }
-function listen(){ if(!db){document.getElementById('conn').textContent='Firebase غير متصل';return;} document.getElementById('conn').textContent='متصل — تتم المزامنة مباشرة'; if(unsub)unsub(); unsub=db.collection(COLLECTION_NAME).orderBy('createdAt','desc').onSnapshot(snap=>{mails=snap.docs.map(d=>({id:d.id,...d.data()})); render();},err=>{console.error(err);document.getElementById('conn').textContent='تعذر الاتصال بقاعدة البيانات';document.getElementById('list').className='empty';document.getElementById('list').textContent='تعذر تحميل المراسلات من Firebase';toast('تعذر الاتصال بـ Firebase',true);});}
+function listen(){
+  if(!db){document.getElementById('conn').textContent='Firebase غير متصل';return;}
+  document.getElementById('conn').textContent='متصل — يتم عرض أي بريد جديد فوراً';
+  if(unsub)unsub();
+  unsub=db.collection(COLLECTION_NAME).orderBy('createdAt','desc').onSnapshot(snap=>{
+    const incoming=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const newOnes=[];
+    incoming.forEach(m=>{ if(!knownIds.has(m.id)) newOnes.push(m); });
+    mails=incoming;
+    render();
+    if(firstLoad){
+      knownIds=new Set(mails.map(m=>m.id));
+      firstLoad=false;
+      document.getElementById('conn').textContent='متصل — جاهز لاستقبال التحديثات';
+      return;
+    }
+    if(newOnes.length){
+      knownIds=new Set(mails.map(m=>m.id));
+      const latest=newOnes[0];
+      document.getElementById('conn').textContent='تم استلام تحديث جديد الآن';
+      toast('وصل بريد جديد للمدير');
+      notifyNewMail(latest);
+      try{ if(navigator.vibrate) navigator.vibrate([180,80,180]); }catch(e){}
+    }
+  },err=>{console.error(err);document.getElementById('conn').textContent='تعذر الاتصال بقاعدة البيانات';document.getElementById('list').className='empty';document.getElementById('list').textContent='تعذر تحميل المراسلات من Firebase';toast('تعذر الاتصال بـ Firebase',true);});
+}
 function refresh(){listen();toast('تم التحديث');}
+function requestNotify(){
+  if(!('Notification' in window)){toast('المتصفح لا يدعم إشعارات الويب',true);return;}
+  Notification.requestPermission().then(p=>{toast(p==='granted'?'تم تفعيل الإشعارات':'لم يتم السماح بالإشعارات',p!=='granted');});
+}
+function notifyNewMail(m){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const title='وصل بريد جديد';
+  const body=(m.subject||'مراسلة جديدة')+' - '+(m.party||m.from||'');
+  try{ new Notification(title,{body,tag:String(m.id),renotify:true}); }catch(e){}
+}
+
 function setFilter(f){filter=f;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x.dataset.filter===f));render();}
 function getStatus(m){ if(m.archived) return 'archive'; return m.status || 'new'; }
 function badge(status){ if(status==='new')return '<span class="badge new">جديد</span>'; if(status==='pending')return '<span class="badge pending">قيد المعالجة</span>'; if(status==='done')return '<span class="badge done">منجز</span>'; return '<span class="badge arch">الأرشيف</span>'; }
@@ -74,7 +110,7 @@ function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&l
 function escAttr(s){return esc(s).replace(/`/g,'');}
 document.addEventListener('click',e=>{ const openBtn=e.target.closest('.openDetailsBtn'); if(openBtn){openDetails(openBtn.dataset.id);return;} const filterBtn=e.target.closest('[data-filter]'); if(filterBtn){setFilter(filterBtn.dataset.filter);return;} });
 document.addEventListener('change',e=>{ if(e.target && e.target.id==='modalStatusSelect') changeStatus(e.target.dataset.id,e.target.value); });
-document.getElementById('loginBtn').addEventListener('click',login);document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});document.getElementById('logoutBtn').addEventListener('click',logout);document.getElementById('refreshBtn').addEventListener('click',refresh);document.getElementById('q').addEventListener('input',e=>{query=e.target.value;render();});document.getElementById('closeModal').addEventListener('click',closeDetails);document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target.id==='detailsModal')closeDetails();});
+document.getElementById('loginBtn').addEventListener('click',login);document.getElementById('notifyBtn').addEventListener('click',requestNotify);document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});document.getElementById('logoutBtn').addEventListener('click',logout);document.getElementById('refreshBtn').addEventListener('click',refresh);document.getElementById('q').addEventListener('input',e=>{query=e.target.value;render();});document.getElementById('closeModal').addEventListener('click',closeDetails);document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target.id==='detailsModal')closeDetails();});
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{});}
 </script>
 </body>
