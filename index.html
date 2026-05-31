@@ -415,6 +415,24 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   cursor:pointer;font-family:Tajawal,sans-serif;margin-top:4px
 }
 
+/* إشعار بريد جديد */
+#newMailAlert{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  background:linear-gradient(135deg,#1e3a5f,#0f2d4a);
+  border-bottom:3px solid var(--green);
+  padding:14px 16px;display:none;
+  animation:slideDown .35s ease
+}
+#newMailAlert.show{display:block}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.nma-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.nma-icon{font-size:28px;flex-shrink:0;animation:ring .5s ease .2s}
+@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(-15deg)}75%{transform:rotate(15deg)}}
+.nma-txt{flex:1}
+.nma-title{font-size:14px;font-weight:800;color:#86efac}
+.nma-sub{font-size:12px;color:#94a3b8;margin-top:2px}
+.nma-close{background:transparent;border:none;color:#94a3b8;font-size:22px;cursor:pointer;padding:0;line-height:1}
+
 /* toast */
 .toast{
   position:fixed;left:50%;bottom:90px;transform:translateX(-50%);
@@ -638,6 +656,18 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
     <button class="vbtn vbtn-close" onclick="closeViewer()">✕ إغلاق</button>
   </div>
   <div id="ivBody"></div>
+</div>
+
+<!-- ════ إشعار بريد جديد ════ -->
+<div id="newMailAlert">
+  <div class="nma-inner">
+    <span class="nma-icon">📬</span>
+    <div class="nma-txt">
+      <div class="nma-title" id="nmaTitle">وصل بريد جديد</div>
+      <div class="nma-sub" id="nmaSub"></div>
+    </div>
+    <button class="nma-close" onclick="closeNewMailAlert()">✕</button>
+  </div>
 </div>
 
 <!-- ════ بانر التثبيت ════ -->
@@ -986,14 +1016,15 @@ function startListen(){
           setTimeout(()=>setConn('ok','متصل'),3000);
           const m=nw[0];
           const src=m.source==='employee-mobile'?'👤 موظف: ':'';
-          toast('وصل بريد جديد 📬');
+          const notifBody=src+(m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||'');
+          // إشعار بصري في أعلى الشاشة
+          showNewMailAlert('📬 وصل بريد جديد', notifBody);
+          // صوت
           playSound();
-          sendNotif(
-            '📬 وصل بريد جديد',
-            src+(m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''),
-            'ncdc-'+m.id
-          );
-          try{navigator.vibrate&&navigator.vibrate([180,80,180]);}catch(e){}
+          // إشعار النظام (إذا مفعّل)
+          sendNotif('📬 وصل بريد جديد', notifBody, 'ncdc-'+m.id);
+          // اهتزاز
+          try{navigator.vibrate&&navigator.vibrate([200,100,200,100,300]);}catch(e){}
         } else {
           setConn('ok','متصل — يعرض أي بريد جديد فوراً');
         }
@@ -1152,25 +1183,57 @@ function showFBErr(m){
 function hideFBErr(){document.getElementById('fbErrBanner')?.classList.remove('show');}
 
 /* ══ صوت ══ */
+let _audioCtx=null;
+function getAudioCtx(){
+  if(!_audioCtx){
+    try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
+  }
+  return _audioCtx;
+}
+// افتح AudioContext عند أول لمسة/ضغط حتى يعمل الصوت لاحقاً تلقائياً
+document.addEventListener('touchstart',()=>getAudioCtx(),{once:true,passive:true});
+document.addEventListener('click',()=>getAudioCtx(),{once:true,passive:true});
+
 function playSound(){
   try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    function b(f,s,d,v=0.4){
+    const ctx=getAudioCtx();
+    if(!ctx) return;
+    // استيقظ ctx إذا كان مجمداً
+    if(ctx.state==='suspended') ctx.resume();
+    function b(f,s,d,v=0.5){
       const o=ctx.createOscillator(),g=ctx.createGain();
       o.connect(g);g.connect(ctx.destination);
       o.frequency.value=f;o.type='sine';
       g.gain.setValueAtTime(0,ctx.currentTime+s);
-      g.gain.linearRampToValueAtTime(v,ctx.currentTime+s+.01);
+      g.gain.linearRampToValueAtTime(v,ctx.currentTime+s+0.01);
       g.gain.linearRampToValueAtTime(0,ctx.currentTime+s+d);
-      o.start(ctx.currentTime+s);o.stop(ctx.currentTime+s+d+.05);
+      o.start(ctx.currentTime+s);
+      o.stop(ctx.currentTime+s+d+0.1);
     }
-    b(520,0,.12,.5);b(660,.15,.12,.5);b(800,.30,.2,.6);
-  }catch(e){}
+    b(520,0.0,0.15,0.6);
+    b(660,0.18,0.15,0.6);
+    b(800,0.36,0.25,0.7);
+  }catch(e){console.warn('sound error',e);}
 }
 if('serviceWorker' in navigator){
   navigator.serviceWorker.addEventListener('message',e=>{
     if(e.data?.type==='PLAY_SOUND') playSound();
   });
+}
+
+/* ══ إشعار بريد جديد (بصري) ══ */
+let nmaTimer=null;
+function showNewMailAlert(title,sub){
+  const el=document.getElementById('newMailAlert');
+  document.getElementById('nmaTitle').textContent=title||'وصل بريد جديد 📬';
+  document.getElementById('nmaSub').textContent=sub||'';
+  el.classList.add('show');
+  if(nmaTimer) clearTimeout(nmaTimer);
+  nmaTimer=setTimeout(()=>el.classList.remove('show'),6000);
+}
+function closeNewMailAlert(){
+  document.getElementById('newMailAlert').classList.remove('show');
+  if(nmaTimer) clearTimeout(nmaTimer);
 }
 
 /* ══ عارض الصور ══ */
