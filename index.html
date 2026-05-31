@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -482,19 +483,6 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
     <div class="lc-logo emp">👤</div>
     <div class="lc-title">دخول الموظف</div>
     <div class="lc-sub">المركز الوطني لمكافحة الأمراض<br>إدارة التطعيمات</div>
-    <input id="empName" class="lc-inp rtl" type="text" placeholder="اسمك الكامل" autocomplete="name"/>
-    <select id="empDept" class="lc-sel">
-      <option value="">— اختر القسم —</option>
-      <option>إدارة التطعيمات</option>
-      <option>مكتب الاستقبال</option>
-      <option>قسم المتابعة</option>
-      <option>قسم الإحصاء</option>
-      <option>الإدارة العامة</option>
-      <option>قسم المستودع</option>
-      <option value="other">قسم آخر...</option>
-    </select>
-    <input id="empOther" class="lc-inp rtl" type="text" placeholder="اسم القسم" style="display:none;margin-top:8px"/>
-    <div id="empErr" class="err-box">الرجاء إدخال الاسم واختيار القسم</div>
     <button id="empLoginBtn" class="lc-btn emp-btn">دخول</button>
     <button class="lc-back" onclick="goRole()">← رجوع</button>
   </div>
@@ -566,7 +554,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
       <div class="tb-icon emp-ic">👤</div>
       <div class="tb-head">
         <h1 id="empTopName">موظف</h1>
-        <p id="empTopDept" style="color:#86efac;font-size:11px;margin-top:2px"></p>
+        <p style="color:#86efac;font-size:11px;margin-top:2px">إدارة التطعيمات</p>
       </div>
       <button class="ib" onclick="logoutEmp()" title="خروج">↩</button>
     </div>
@@ -831,33 +819,21 @@ document.getElementById('mgrLoginBtn').addEventListener('click',doMgrLogin);
 document.getElementById('mgrPass').addEventListener('keydown',e=>{if(e.key==='Enter')doMgrLogin();});
 
 /* ══ دخول الموظف ══ */
-document.getElementById('empDept').addEventListener('change',e=>{
-  document.getElementById('empOther').style.display=e.target.value==='other'?'block':'none';
-});
 function doEmpLogin(){
   const name=document.getElementById('empName').value.trim();
-  let dept=document.getElementById('empDept').value;
-  if(dept==='other') dept=document.getElementById('empOther').value.trim();
-  if(!name||!dept){document.getElementById('empErr').style.display='block';return;}
-  document.getElementById('empErr').style.display='none';
-  empInfo={name,dept};
+  empInfo={name,dept:'إدارة التطعيمات'};
   currentRole='employee';
-  document.getElementById('empTopName').textContent=name;
-  document.getElementById('empTopDept').textContent=dept;
   goScreen('S_emp');
   if(!db) initFB();
   loadMyMails();
 }
 function logoutEmp(){
   goScreen('S_role');
-  document.getElementById('empName').value='';
-  document.getElementById('empDept').value='';
   attachedImg=null; attachedName='';
   resetForm();
   currentRole=null;
 }
 document.getElementById('empLoginBtn').addEventListener('click',doEmpLogin);
-document.getElementById('empName').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('empDept').focus();});
 
 /* ══ تبويبات الموظف ══ */
 function empTab(t){
