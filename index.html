@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -26,11 +25,9 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 
 /* ── الشاشات ── */
 .screen{display:none;min-height:100vh}
-.screen.active{display:flex}
-.screen.block{display:block}
 
 /* ── شاشة الاختيار ── */
-#S_role{flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+#S_role{padding:24px;background:var(--bg)}
 .rl-logo{text-align:center;margin-bottom:36px}
 .rl-shield{width:88px;height:88px;border-radius:26px;
   background:linear-gradient(135deg,rgba(59,130,246,.22),rgba(34,197,94,.12));
@@ -434,7 +431,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 <!-- ════════════════════════════
   شاشة اختيار الدور
 ════════════════════════════ -->
-<div id="S_role" class="screen active">
+<div id="S_role" class="screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
   <div class="rl-logo">
     <div class="rl-shield">🏥</div>
     <h1>NCDC — إدارة التطعيمات</h1>
@@ -771,17 +768,16 @@ const SCREENS=['S_role','S_mgrLogin','S_empLogin','S_mgr','S_emp'];
 function goScreen(id){
   SCREENS.forEach(s=>{
     const el=document.getElementById(s);
-    el.classList.remove('active','block');
+    if(el) el.style.display='none';
   });
   const el=document.getElementById(id);
-  // S_mgr و S_emp تحتاج display:flex مع flex-direction:column
-  el.classList.add(id==='S_role'||id==='S_mgrLogin'||id==='S_empLogin'?'active':(id==='S_mgr'||id==='S_emp'?'block':'active'));
-  // force flex للشاشات التي تحتاجه
-  if(['S_role','S_mgrLogin','S_empLogin','S_mgr','S_emp'].includes(id)){
+  if(!el) return;
+  if(id==='S_mgr'||id==='S_emp'){
     el.style.display='flex';
-    if(id==='S_mgr'||id==='S_emp'){
-      el.style.flexDirection='column';
-    }
+    el.style.flexDirection='column';
+  } else {
+    el.style.display='flex';
+    el.style.flexDirection='';
   }
 }
 
@@ -820,8 +816,7 @@ document.getElementById('mgrPass').addEventListener('keydown',e=>{if(e.key==='En
 
 /* ══ دخول الموظف ══ */
 function doEmpLogin(){
-  const name=document.getElementById('empName').value.trim();
-  empInfo={name,dept:'إدارة التطعيمات'};
+  empInfo={name:'موظف',dept:'إدارة التطعيمات'};
   currentRole='employee';
   goScreen('S_emp');
   if(!db) initFB();
