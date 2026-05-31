@@ -965,13 +965,20 @@ async function loadMyMails(){
   const el=document.getElementById('myList');
   el.className='loading'; el.textContent='جاري التحميل...';
   try{
-    const snap=await db.collection(COLL)
-      .where('from','==',empInfo.name)
-      .orderBy('createdAt','desc').get();
-    if(snap.empty){el.className='empty';el.textContent='لا توجد مراسلات بعد';return;}
+    // جلب كل المراسلات بدون orderBy لتجنب الحاجة لـ index
+    const snap=await db.collection(COLL).get();
+    // فلترة وترتيب في JS
+    let docs=snap.docs
+      .map(d=>({id:d.id,...d.data()}))
+      .filter(m=>m.source==='employee-mobile')
+      .sort((a,b)=>{
+        const ta=a.createdAt?.toMillis?.()||0;
+        const tb=b.createdAt?.toMillis?.()||0;
+        return tb-ta;
+      });
+    if(!docs.length){el.className='empty';el.textContent='لا توجد مراسلات بعد';return;}
     el.className='';
-    el.innerHTML=snap.docs.map(d=>{
-      const m={id:d.id,...d.data()};
+    el.innerHTML=docs.map(m=>{
       const st=m.status||'new';
       const sc=st==='pending'?'b-pending':st==='done'?'b-done':'b-new';
       const sl=st==='pending'?'قيد المعالجة':st==='done'?'✓ منجز':'جديد';
@@ -998,10 +1005,13 @@ function startListen(){
   if(!db) initFB();
   setConn('wait','جاري الاتصال...');
   try{
-    unsub=db.collection(COLL).orderBy('createdAt','desc').onSnapshot(
+    unsub=db.collection(COLL).onSnapshot(
       snap=>{
         hideFBErr(); retryCount=0;
-        const inc=snap.docs.map(d=>({id:d.id,...d.data()}));
+        // ترتيب بـ JS لتجنب الحاجة لـ index
+        const inc=snap.docs
+          .map(d=>({id:d.id,...d.data()}))
+          .sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
         const nw=inc.filter(m=>!knownIds.has(m.id));
         mails=inc; renderMails();
         if(firstLoad){
