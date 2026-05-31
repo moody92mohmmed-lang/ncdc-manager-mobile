@@ -1,19 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NCDC — تطبيق المدير v10</title>
+  <title>NCDC — لوحة المدير v10</title>
   <meta name="theme-color" content="#0f172a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="NCDC مدير" />
-  <!-- Apple Touch Icons -->
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
-  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -26,69 +24,73 @@
     .wrap{max-width:720px;margin:0 auto;padding:14px}
     .center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
 
-    /* ── LOGIN ── */
+    /* LOGIN */
     .login{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 20px;box-shadow:0 16px 50px rgba(0,0,0,.25)}
-    .logo{width:62px;height:62px;border-radius:20px;background:rgba(59,130,246,.14);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}
-    .title{text-align:center;font-size:21px;font-weight:800}
-    .sub{text-align:center;color:var(--mut);font-size:13px;margin-top:5px;line-height:1.6}
-    .inp{width:100%;margin-top:18px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:17px;outline:none;text-align:center}
-    .btn{width:100%;margin-top:12px;border:0;border-radius:14px;background:var(--blue);color:white;padding:13px;font-size:16px;font-weight:800;cursor:pointer}
+    .logo{width:64px;height:64px;border-radius:20px;background:rgba(59,130,246,.14);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px}
+    .title{text-align:center;font-size:22px;font-weight:800}
+    .sub{text-align:center;color:var(--mut);font-size:13px;margin-top:5px;line-height:1.7}
+    .inp{width:100%;margin-top:18px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:17px;outline:none;text-align:center;font-family:Tajawal,sans-serif}
+    .inp:focus{border-color:var(--blue)}
+    .loginbtn{width:100%;margin-top:12px;border:0;border-radius:14px;background:var(--blue);color:white;padding:13px;font-size:16px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif}
     .err{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;text-align:center;font-size:13px}
 
-    /* ── INSTALL BANNER ── */
-    #installBanner{background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(34,197,94,.12));border:1px solid rgba(59,130,246,.3);border-radius:18px;padding:14px 16px;margin:0 14px 14px;display:none;align-items:center;gap:12px}
+    /* INSTALL BANNER */
+    #installBanner{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(34,197,94,.1));border:1px solid rgba(59,130,246,.3);border-radius:18px;padding:14px 16px;margin:12px 14px 0;display:none;align-items:center;gap:12px}
     #installBanner.show{display:flex}
-    #installBanner .ib-icon{font-size:28px;flex-shrink:0}
-    #installBanner .ib-text{flex:1}
-    #installBanner .ib-text strong{display:block;font-size:14px;font-weight:800;margin-bottom:3px}
-    #installBanner .ib-text span{font-size:12px;color:var(--mut)}
+    .ib-icon{font-size:28px;flex-shrink:0}
+    .ib-text{flex:1}.ib-text strong{display:block;font-size:14px;font-weight:800;margin-bottom:2px}
+    .ib-text span{font-size:12px;color:var(--mut)}
     #installBtn{background:var(--blue);color:white;border:none;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;white-space:nowrap}
-    #dismissInstall{background:transparent;border:none;color:var(--mut);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0}
+    #dismissInstall{background:transparent;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;line-height:1}
 
-    /* ── iOS INSTALL HINT ── */
-    #iosHint{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:14px;padding:12px 14px;margin:0 14px 14px;display:none;font-size:12px;color:#93c5fd;line-height:1.8;text-align:center}
+    /* iOS HINT */
+    #iosHint{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:14px;padding:12px 14px;margin:12px 14px 0;display:none;font-size:12px;color:#93c5fd;line-height:1.9;text-align:center}
     #iosHint.show{display:block}
 
-    /* ── TOP BAR ── */
+    /* TOP */
     .top{position:sticky;top:0;background:rgba(15,23,42,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:10}
     .topin{max-width:720px;margin:0 auto;padding:13px 14px;display:flex;align-items:center;gap:10px}
     .appicon{width:42px;height:42px;border-radius:15px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:21px}
     .head{flex:1}.head h1{font-size:17px}.head p{font-size:11px;color:var(--mut);margin-top:2px}
-    .iconbtn{border:1px solid var(--line);background:var(--card);color:var(--txt);width:42px;height:42px;border-radius:14px;font-size:18px;cursor:pointer}
+    .iconbtn{border:1px solid var(--line);background:var(--card);color:var(--txt);width:42px;height:42px;border-radius:14px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-    /* ── CONN DOT ── */
+    /* CONN DOT */
     #connDot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:5px;background:#94a3b8;vertical-align:middle;transition:background .4s}
     #connDot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
     #connDot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
     #connDot.wait{background:var(--amber);animation:blink 1s infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-    /* ── FIREBASE ERROR BANNER ── */
-    #firebaseErrBanner{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:14px;padding:11px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
-    #firebaseErrBanner.show{display:flex}
-    #firebaseErrBanner span{flex:1;font-size:13px;color:#fca5a5;line-height:1.6}
-    #retryBtn{border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.18);color:#fca5a5;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+    /* BANNERS */
+    .banner{border-radius:14px;padding:11px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
+    .banner.show{display:flex}
+    .banner span{flex:1;font-size:13px;line-height:1.6}
+    .banner-btn{border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:Tajawal,sans-serif}
+    #firebaseErrBanner{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35)}
+    #firebaseErrBanner span{color:#fca5a5}
+    #retryBtn{background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+    #notifBanner{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)}
+    #notifBanner span{color:#fcd34d}
+    #allowNotifBtn{background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.4);color:#fcd34d}
 
-    /* ── NOTIFY PERMISSION ── */
-    #notifBanner{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:14px;padding:11px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
-    #notifBanner.show{display:flex}
-    #notifBanner span{flex:1;font-size:13px;color:#fcd34d}
-    #allowNotifBtn{background:rgba(245,158,11,.25);border:1px solid rgba(245,158,11,.4);color:#fcd34d;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
-
-    /* ── STATS ── */
+    /* STATS */
     .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
     .stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}
     .stat .n{font-size:28px;font-weight:800}.stat .l{color:var(--mut);font-size:12px;margin-top:2px}
+
+    /* SEARCH & TABS */
     .search{display:flex;gap:8px;margin:14px 0 10px}
-    .search input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none}
-    .search button{width:48px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--txt);font-size:18px}
+    .search input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none;font-family:Tajawal,sans-serif}
+    .search input:focus{border-color:var(--blue)}
+    .search button{width:48px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--txt);font-size:18px;cursor:pointer}
     .tabs{display:flex;gap:8px;overflow:auto;margin:10px 0 14px;padding-bottom:4px}
     .tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:8px 13px;border-radius:999px;font-size:13px;cursor:pointer}
     .tab.on{background:rgba(59,130,246,.18);color:#93c5fd;border-color:rgba(59,130,246,.35)}
 
-    /* ── CARDS ── */
+    /* CARDS */
     .card{background:var(--card);border:1px solid var(--line);border-radius:22px;margin-bottom:12px;overflow:hidden}
-    .cardbody{padding:14px}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    .cardbody{padding:14px}
+    .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
     .subject{font-size:15px;font-weight:800;line-height:1.55;margin:8px 0;color:#fff}
     .meta{font-size:12px;color:var(--mut);line-height:1.8}
     .badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}
@@ -98,61 +100,63 @@
     .arch{background:rgba(148,163,184,.15);color:#cbd5e1}
     .type{background:rgba(59,130,246,.15);color:#93c5fd}
     .actions{background:rgba(15,23,42,.35);border-top:1px solid var(--line);padding:10px}
-    .smallbtn{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:12px;font-weight:800;text-align:center;text-decoration:none;font-size:14px;cursor:pointer}
+    .smallbtn{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:12px;font-weight:800;text-align:center;text-decoration:none;font-size:14px;cursor:pointer;display:block}
     .empty,.loading{text-align:center;color:var(--mut);padding:45px 10px;background:var(--card);border:1px solid var(--line);border-radius:22px}
-    .select{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:white;padding:12px;font-size:16px;outline:none;margin-top:8px}
-    .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:80;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center}
+    .select{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:white;padding:12px;font-size:16px;outline:none;margin-top:8px;font-family:Tajawal,sans-serif}
+    .disabled{opacity:.55;pointer-events:none}
+
+    /* TOAST */
+    .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 16px;font-weight:800;z-index:80;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center;font-size:14px}
     .toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
 
-    /* ── BOTTOM NAV ── */
+    /* BOTTOM NAV */
     .bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20}
     .nav{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px}
-    .nav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px}
+    .nav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px;cursor:pointer;font-family:Tajawal,sans-serif}
     .nav button.on{background:rgba(59,130,246,.14);color:#93c5fd}
     .nav b{display:block;font-size:19px;margin-bottom:2px}
 
-    /* ── MODAL ── */
+    /* MODAL */
     .modal{position:fixed;inset:0;background:rgba(2,6,23,.82);z-index:60;display:none;align-items:flex-end;justify-content:center}
     .modal.show{display:flex}
     .sheet{width:100%;max-width:720px;max-height:88vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -20px 60px rgba(0,0,0,.35)}
-    .modalHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .modalHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
     .modalHead h2{font-size:18px}
-    .close{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:20px}
+    .close{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:20px;cursor:pointer}
     .drow{background:rgba(15,23,42,.35);border:1px solid var(--line);border-radius:14px;padding:11px;margin-bottom:8px}
     .drow b{display:block;color:#93c5fd;font-size:12px;margin-bottom:4px}
     .drow span{font-size:14px;line-height:1.7}
     .statusBox{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:16px;padding:12px;margin:10px 0}
-    .statusBox label{font-size:14px;font-weight:800}
+    .statusBox label{font-size:14px;font-weight:800;display:block;margin-bottom:4px}
     .modalactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
     .preview{margin-top:10px;background:#020617;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
     .preview img{display:block;width:100%;height:auto}
-    .disabled{opacity:.55;pointer-events:none}
-    .debug{font-size:11px;color:#94a3b8;text-align:center;margin-top:8px}
+    .debug{font-size:11px;color:#475569;text-align:center;margin-top:10px;padding-bottom:4px}
   </style>
 </head>
 <body>
 
-<!-- ── شاشة الدخول ── -->
+<!-- شاشة الدخول -->
 <div id="loginScreen" class="center">
   <div class="login">
     <div class="logo">🛡️</div>
     <div class="title">لوحة المدير</div>
     <div class="sub">المركز الوطني لمكافحة الأمراض<br>إدارة التطعيمات</div>
-    <input id="pass" class="inp" type="password" placeholder="كلمة مرور المدير" />
-    <button id="loginBtn" class="btn" type="button">دخول المدير</button>
+    <input id="pass" class="inp" type="password" placeholder="كلمة مرور المدير" autocomplete="current-password" />
+    <button id="loginBtn" class="loginbtn" type="button">دخول المدير</button>
     <div id="loginErr" class="err hide">كلمة المرور غير صحيحة</div>
   </div>
 </div>
 
-<!-- ── التطبيق الرئيسي ── -->
+<!-- التطبيق -->
 <div id="app" class="hide">
 
-  <!-- بانر تثبيت التطبيق (Android/Desktop) -->
+  <!-- بانر التثبيت Android -->
   <div id="installBanner">
     <div class="ib-icon">📲</div>
     <div class="ib-text">
-      <strong>تثبيت التطبيق على الهاتف</strong>
-      <span>يعمل بدون إنترنت ويستقبل الإشعارات</span>
+      <strong>تثبيت التطبيق على هاتفك</strong>
+      <span>يعمل بدون إنترنت ويستقبل إشعارات البريد</span>
     </div>
     <button id="installBtn" type="button">تثبيت</button>
     <button id="dismissInstall" type="button">✕</button>
@@ -160,10 +164,11 @@
 
   <!-- تلميح iOS -->
   <div id="iosHint">
-    📱 لتثبيت التطبيق على iPhone:<br>
-    اضغط على <strong>زر المشاركة</strong> ثم اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong>
+    📱 لتثبيت التطبيق على iPhone أو iPad:<br>
+    اضغط زر <strong>المشاركة ⬆️</strong> ثم اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong>
   </div>
 
+  <!-- الشريط العلوي -->
   <div class="top">
     <div class="topin">
       <div class="appicon">📬</div>
@@ -173,23 +178,24 @@
       </div>
       <button class="iconbtn" id="installIconBtn" title="تثبيت التطبيق" style="display:none">📲</button>
       <button class="iconbtn" id="notifyBtn" title="تفعيل الإشعارات">🔔</button>
-      <button class="iconbtn" id="logoutBtn">↩</button>
+      <button class="iconbtn" id="logoutBtn" title="خروج">↩</button>
     </div>
   </div>
 
   <main class="wrap">
-    <!-- بانر خطأ Firebase -->
-    <div id="firebaseErrBanner">
+    <!-- خطأ Firebase -->
+    <div id="firebaseErrBanner" class="banner">
       <span id="firebaseErrMsg">تعذر الاتصال بـ Firebase</span>
-      <button id="retryBtn" type="button">إعادة المحاولة</button>
+      <button id="retryBtn" class="banner-btn" type="button">إعادة المحاولة</button>
     </div>
 
-    <!-- بانر طلب الإشعارات -->
-    <div id="notifBanner">
+    <!-- طلب الإشعارات -->
+    <div id="notifBanner" class="banner">
       <span>🔔 فعّل الإشعارات لتصلك تنبيهات البريد الجديد فوراً</span>
-      <button id="allowNotifBtn" type="button">تفعيل</button>
+      <button id="allowNotifBtn" class="banner-btn" type="button">تفعيل</button>
     </div>
 
+    <!-- الإحصائيات -->
     <div class="stats">
       <div class="stat"><div class="n" id="stActive">0</div><div class="l">وارد نشط</div></div>
       <div class="stat"><div class="n" id="stNew">0</div><div class="l">جديد</div></div>
@@ -197,11 +203,13 @@
       <div class="stat"><div class="n" id="stDone">0</div><div class="l">منجز</div></div>
     </div>
 
+    <!-- البحث -->
     <div class="search">
       <input id="q" placeholder="بحث بالموضوع أو الجهة أو الرقم...">
       <button id="refreshBtn" type="button">↻</button>
     </div>
 
+    <!-- التبويبات -->
     <div class="tabs">
       <button class="tab on" data-filter="all">الكل</button>
       <button class="tab" data-filter="new">جديد</button>
@@ -211,9 +219,10 @@
     </div>
 
     <div id="list" class="loading">جاري تحميل البيانات...</div>
-    <div class="debug">v10 — PWA + Real-time</div>
+    <div class="debug">v10 · PWA · Real-time Firebase</div>
   </main>
 
+  <!-- شريط التنقل السفلي -->
   <div class="bottom">
     <div class="nav">
       <button class="on" data-filter="all"><b>⌂</b>الرئيسية</button>
@@ -224,7 +233,7 @@
   </div>
 </div>
 
-<!-- Modal تفاصيل المراسلة -->
+<!-- نافذة التفاصيل -->
 <div id="detailsModal" class="modal">
   <div class="sheet">
     <div class="modalHead">
@@ -255,9 +264,9 @@ const firebaseConfig = {
 let db=null, unsub=null, mails=[], filter='all', query='';
 let firstLoad=true, knownIds=new Set();
 let retryTimer=null, retryCount=0;
-let deferredInstallPrompt=null; // حدث تثبيت PWA
+let deferredInstallPrompt=null;
 
-/* ══ تهيئة Firebase ══ */
+/* ══ Firebase ══ */
 function initFirebase(){
   try{
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -269,120 +278,91 @@ function initFirebase(){
   }
 }
 
-/* ══ Service Worker تسجيل ══ */
+/* ══ Service Worker ══ */
 async function registerSW(){
   if(!('serviceWorker' in navigator)) return;
   try{
     const reg = await navigator.serviceWorker.register('./sw.js', {scope:'./'});
-    console.log('[App] SW registered:', reg.scope);
-    // تحديث SW إذا كان هناك إصدار جديد
+    console.log('[PWA] SW registered');
     reg.addEventListener('updatefound', ()=>{
-      const newWorker = reg.installing;
-      newWorker?.addEventListener('statechange', ()=>{
-        if(newWorker.state==='installed' && navigator.serviceWorker.controller)
-          toast('يتوفر تحديث للتطبيق — أعد التشغيل');
+      reg.installing?.addEventListener('statechange', e=>{
+        if(e.target.state==='installed' && navigator.serviceWorker.controller)
+          toast('يتوفر تحديث — أعد فتح التطبيق');
       });
     });
-  }catch(e){
-    console.warn('[App] SW registration failed:', e);
-  }
+  }catch(e){ console.warn('[PWA] SW failed:', e); }
 }
 
 /* ══ PWA Install ══ */
 function setupInstall(){
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isIOS        = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                     || window.navigator.standalone === true;
-
-  if(isStandalone) return; // مثبّت بالفعل
+  if(isStandalone) return;
 
   if(isIOS){
-    // تلميح iOS
-    setTimeout(()=>{
-      document.getElementById('iosHint')?.classList.add('show');
-    }, 2000);
+    setTimeout(()=>{ document.getElementById('iosHint')?.classList.add('show'); }, 1500);
     return;
   }
 
-  // Android / Chrome
   window.addEventListener('beforeinstallprompt', e=>{
     e.preventDefault();
     deferredInstallPrompt = e;
-    document.getElementById('installBanner')?.classList.add('show');
-    const iconBtn = document.getElementById('installIconBtn');
-    if(iconBtn) iconBtn.style.display = '';
+    document.getElementById('installBanner').classList.add('show');
+    document.getElementById('installIconBtn').style.display = '';
   });
 
   window.addEventListener('appinstalled', ()=>{
-    document.getElementById('installBanner')?.classList.remove('show');
-    const iconBtn = document.getElementById('installIconBtn');
-    if(iconBtn) iconBtn.style.display = 'none';
+    document.getElementById('installBanner').classList.remove('show');
+    document.getElementById('installIconBtn').style.display = 'none';
     deferredInstallPrompt = null;
-    toast('تم تثبيت التطبيق بنجاح ✓');
+    toast('✓ تم تثبيت التطبيق بنجاح');
   });
 }
 
 async function doInstall(){
-  if(!deferredInstallPrompt){ toast('لا يمكن التثبيت الآن — جرب من Chrome', true); return; }
+  if(!deferredInstallPrompt){ toast('افتح الصفحة من Chrome لتتمكن من التثبيت', true); return; }
   deferredInstallPrompt.prompt();
   const result = await deferredInstallPrompt.userChoice;
-  if(result.outcome === 'accepted'){
-    toast('جاري تثبيت التطبيق...');
-    document.getElementById('installBanner')?.classList.remove('show');
-  }
+  if(result.outcome === 'accepted') toast('جاري تثبيت التطبيق...');
   deferredInstallPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
 }
 
 /* ══ الإشعارات ══ */
 async function requestNotify(){
-  if(!('Notification' in window)){toast('المتصفح لا يدعم الإشعارات',true);return;}
+  if(!('Notification' in window)){ toast('المتصفح لا يدعم الإشعارات',true); return; }
   const perm = await Notification.requestPermission();
   if(perm==='granted'){
-    toast('تم تفعيل الإشعارات ✓');
-    document.getElementById('notifBanner')?.classList.remove('show');
-    // إشعار تجريبي
-    sendNotification('NCDC مدير — مفعّل ✓','ستصلك الإشعارات فوراً عند وصول أي بريد جديد');
+    toast('✓ تم تفعيل الإشعارات');
+    document.getElementById('notifBanner').classList.remove('show');
+    sendNotification('NCDC مدير ✓','ستصلك إشعارات البريد الجديد فوراً');
   } else {
-    toast('لم يتم السماح بالإشعارات',true);
+    toast('لم يتم السماح بالإشعارات — تحقق من إعدادات المتصفح', true);
   }
 }
 
 function sendNotification(title, body, tag='ncdc'){
-  if(!('Notification' in window) || Notification.permission!=='granted') return;
-
-  // محاولة إرسال عبر Service Worker أولاً (تعمل في الخلفية)
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
   if(navigator.serviceWorker?.controller){
-    navigator.serviceWorker.controller.postMessage({
-      type:'SHOW_NOTIFICATION', title, body, tag
-    });
+    navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION', title, body, tag});
     return;
   }
-
-  // احتياط: إشعار مباشر
-  try{
-    new Notification(title,{
-      body, tag, renotify:true,
-      icon:'./icons/icon-192.png',
-      dir:'rtl', lang:'ar'
-    });
-  }catch(e){}
+  try{ new Notification(title,{body, tag, renotify:true, icon:'./icon-192.png', dir:'rtl', lang:'ar'}); }catch(e){}
 }
 
-function checkNotifStatus(){
-  if(!('Notification' in window)) return;
-  if(Notification.permission==='default'){
-    document.getElementById('notifBanner')?.classList.add('show');
-  }
+function checkNotifBanner(){
+  if('Notification' in window && Notification.permission==='default')
+    document.getElementById('notifBanner').classList.add('show');
 }
 
 /* ══ حالة الاتصال ══ */
 function setConnStatus(state, text){
-  const dot  = document.getElementById('connDot');
-  const conn = document.getElementById('conn');
+  const dot = document.getElementById('connDot');
+  const con = document.getElementById('conn');
   if(dot) dot.className = state;
-  if(conn) conn.textContent = text;
+  if(con) con.textContent = text;
 }
-
 function showFirebaseError(msg){
   const b = document.getElementById('firebaseErrBanner');
   const m = document.getElementById('firebaseErrMsg');
@@ -390,10 +370,7 @@ function showFirebaseError(msg){
   if(b) b.classList.add('show');
   setConnStatus('err','غير متصل');
 }
-
-function hideFirebaseError(){
-  document.getElementById('firebaseErrBanner')?.classList.remove('show');
-}
+function hideFirebaseError(){ document.getElementById('firebaseErrBanner').classList.remove('show'); }
 
 /* ══ الدخول والخروج ══ */
 function normDigits(s){
@@ -401,22 +378,23 @@ function normDigits(s){
     .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
     .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();
 }
-
 function login(){
   const p = normDigits(document.getElementById('pass').value);
-  if(p!==MANAGER_PASSWORD){document.getElementById('loginErr').classList.remove('hide');return;}
+  if(p !== MANAGER_PASSWORD){
+    document.getElementById('loginErr').classList.remove('hide');
+    return;
+  }
   document.getElementById('loginErr').classList.add('hide');
   document.getElementById('loginScreen').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
-  checkNotifStatus();
+  checkNotifBanner();
   startListen();
 }
-
 function logout(){
   stopListen();
   document.getElementById('app').classList.add('hide');
   document.getElementById('loginScreen').classList.remove('hide');
-  document.getElementById('pass').value='';
+  document.getElementById('pass').value = '';
   mails=[];firstLoad=true;knownIds=new Set();retryCount=0;
   hideFirebaseError();
 }
@@ -426,12 +404,10 @@ function stopListen(){
   if(unsub){unsub();unsub=null;}
   if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
 }
-
 function startListen(){
   stopListen();
   if(!db){if(!initFirebase())return;}
   setConnStatus('wait','جاري الاتصال بـ Firebase...');
-
   try{
     unsub = db.collection(COLLECTION_NAME)
               .orderBy('createdAt','desc')
@@ -439,30 +415,26 @@ function startListen(){
       snap=>{
         hideFirebaseError();
         retryCount=0;
-
         const incoming = snap.docs.map(d=>({id:d.id,...d.data()}));
         const newOnes  = incoming.filter(m=>!knownIds.has(m.id));
         mails = incoming;
         render();
-
         if(firstLoad){
-          knownIds  = new Set(mails.map(m=>m.id));
-          firstLoad = false;
+          knownIds=new Set(mails.map(m=>m.id));
+          firstLoad=false;
           setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً');
           return;
         }
-
         if(newOnes.length){
-          knownIds = new Set(mails.map(m=>m.id));
-          setConnStatus('ok','تم استلام تحديث جديد الآن ✓');
+          knownIds=new Set(mails.map(m=>m.id));
+          setConnStatus('ok','تم استلام تحديث جديد ✓');
           setTimeout(()=>setConnStatus('ok','متصل — يتم عرض أي بريد جديد فوراً'),3000);
-          const latest = newOnes[0];
+          const m = newOnes[0];
           toast('وصل بريد جديد 📬');
-          // إشعار حقيقي للهاتف
           sendNotification(
             'وصل بريد جديد 📬',
-            (latest.subject||'مراسلة جديدة')+' — '+(latest.party||latest.from||''),
-            'ncdc-'+latest.id
+            (m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||''),
+            'ncdc-'+m.id
           );
           try{if(navigator.vibrate)navigator.vibrate([180,80,180]);}catch(e){}
         } else {
@@ -472,14 +444,11 @@ function startListen(){
       err=>{
         console.error('Firestore error:',err);
         unsub=null;
-
-        let errMsg='تعذر الاتصال بـ Firebase';
-        if(err.code==='permission-denied') errMsg='خطأ في صلاحيات Firebase — تحقق من Rules';
-        else if(err.code==='unavailable')  errMsg='Firebase غير متاح — تحقق من الإنترنت';
-        else if(err.code==='unauthenticated') errMsg='Firebase: غير مصرح';
-        else if(err.message) errMsg='خطأ Firebase: '+err.code;
-
-        showFirebaseError(errMsg);
+        let msg='تعذر الاتصال بـ Firebase';
+        if(err.code==='permission-denied') msg='خطأ في صلاحيات Firebase — تحقق من Rules';
+        else if(err.code==='unavailable')  msg='Firebase غير متاح — تحقق من الإنترنت';
+        else if(err.code==='unauthenticated') msg='Firebase: غير مصرح';
+        showFirebaseError(msg);
         retryCount++;
         const delay=Math.min(RETRY_DELAY_MS*retryCount,30000);
         setConnStatus('wait',`إعادة المحاولة خلال ${Math.round(delay/1000)} ث...`);
@@ -488,11 +457,8 @@ function startListen(){
         },delay);
       }
     );
-  }catch(e){
-    showFirebaseError('خطأ غير متوقع: '+e.message);
-  }
+  }catch(e){ showFirebaseError('خطأ: '+e.message); }
 }
-
 function refresh(){retryCount=0;startListen();toast('جاري إعادة التحميل...');}
 
 /* ══ عرض البيانات ══ */
@@ -501,16 +467,13 @@ function setFilter(f){
   document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x.dataset.filter===f));
   render();
 }
-
-function getStatus(m){if(m.archived)return 'archive';return m.status||'new';}
-
-function badge(status){
-  if(status==='new')     return '<span class="badge new">جديد</span>';
-  if(status==='pending') return '<span class="badge pending">قيد المعالجة</span>';
-  if(status==='done')    return '<span class="badge done">منجز</span>';
-  return '<span class="badge arch">الأرشيف</span>';
+function getStatus(m){if(m.archived)return'archive';return m.status||'new';}
+function badge(s){
+  if(s==='new')     return'<span class="badge new">جديد</span>';
+  if(s==='pending') return'<span class="badge pending">قيد المعالجة</span>';
+  if(s==='done')    return'<span class="badge done">منجز</span>';
+  return'<span class="badge arch">الأرشيف</span>';
 }
-
 function arType(t){return t==='out'?'صادر':'وارد';}
 
 function render(){
@@ -555,12 +518,12 @@ function openDetails(id){
   const st=getStatus(m);
   const att=firstExisting(m,['att','attachmentUrl','pdfUrl','fileUrl','scanUrl','file','url','uploadedFileUrl','attachment','documentUrl']);
   const img=firstExisting(m,['img','imageUrl','image','photoUrl','scanImageUrl','attachmentImageUrl','imageData','photo','scan']);
-  const html=`
-    <div class="drow"><b>الموضوع</b><span>${esc(m.subject||'بدون موضوع')}</span></div>
-    <div class="drow"><b>الرقم</b><span>${esc(m.ref||'غير محدد')}</span></div>
-    <div class="drow"><b>التاريخ</b><span>${esc(m.date||'غير محدد')}</span></div>
-    <div class="drow"><b>الجهة</b><span>${esc(m.party||m.from||'غير محدد')}</span></div>
-    <div class="drow"><b>الحالة الحالية</b><span id="currentStatusBadge">${badge(st)}</span></div>
+  document.getElementById('modalContent').innerHTML=`
+    <div class="drow"><b>الموضوع</b><span>${esc(m.subject||'—')}</span></div>
+    <div class="drow"><b>الرقم</b><span>${esc(m.ref||'—')}</span></div>
+    <div class="drow"><b>التاريخ</b><span>${esc(m.date||'—')}</span></div>
+    <div class="drow"><b>الجهة</b><span>${esc(m.party||m.from||'—')}</span></div>
+    <div class="drow"><b>الحالة</b><span id="currentStatusBadge">${badge(st)}</span></div>
     ${m.notes?`<div class="drow"><b>ملاحظات</b><span>${esc(m.notes)}</span></div>`:''}
     <div class="statusBox">
       <label>تعديل الحالة</label>
@@ -577,8 +540,7 @@ function openDetails(id){
       ${img?`<a class="smallbtn" href="${escAttr(img)}" target="_blank" rel="noopener">فتح الصورة</a>`
            :'<button class="smallbtn disabled" type="button">لا توجد صورة</button>'}
     </div>
-    ${img?`<div class="preview"><img src="${escAttr(img)}" alt="صورة المراسلة" onerror="this.parentElement.style.display='none'" /></div>`:''}`;
-  document.getElementById('modalContent').innerHTML=html;
+    ${img?`<div class="preview"><img src="${escAttr(img)}" alt="صورة المراسلة" onerror="this.parentElement.style.display='none'"></div>`:''}`;
   document.getElementById('detailsModal').classList.add('show');
 }
 
@@ -587,46 +549,43 @@ function closeDetails(){document.getElementById('detailsModal').classList.remove
 async function changeStatus(id,val){
   const m=mails.find(x=>String(x.id)===String(id));
   if(!m){toast('لم يتم العثور على المراسلة',true);return;}
-  const archived=val==='archive';
-  const status=archived?'done':val;
+  const archived=val==='archive', status=archived?'done':val;
   try{
     await db.collection(COLLECTION_NAME).doc(id).set(
       {status,archived,statusUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()},
       {merge:true}
     );
-    const fake={...m,status,archived};
     const b=document.getElementById('currentStatusBadge');
-    if(b) b.innerHTML=badge(getStatus(fake));
-    toast('تم تعديل الحالة بنجاح ✓');
-  }catch(e){
-    toast('خطأ أثناء تعديل الحالة: '+(e.code||e.message),true);
-  }
+    if(b) b.innerHTML=badge(getStatus({...m,status,archived}));
+    toast('✓ تم تعديل الحالة');
+  }catch(e){ toast('خطأ: '+(e.code||e.message),true); }
 }
 
 /* ══ أدوات مساعدة ══ */
 function toast(msg,bad=false){
   const t=document.createElement('div');
-  t.className='toast'+(bad?' bad':'');t.textContent=msg;
-  document.body.appendChild(t);setTimeout(()=>t.remove(),2400);
+  t.className='toast'+(bad?' bad':'');
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2600);
 }
 function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));}
 function escAttr(s){return esc(s).replace(/`/g,'');}
 
-/* ══ مستمعو الأحداث ══ */
+/* ══ الأحداث ══ */
 document.addEventListener('click',e=>{
-  const openBtn=e.target.closest('.openDetailsBtn');
-  if(openBtn){openDetails(openBtn.dataset.id);return;}
-  const filterBtn=e.target.closest('[data-filter]');
-  if(filterBtn){setFilter(filterBtn.dataset.filter);return;}
+  const o=e.target.closest('.openDetailsBtn');
+  if(o){openDetails(o.dataset.id);return;}
+  const f=e.target.closest('[data-filter]');
+  if(f){setFilter(f.dataset.filter);return;}
 });
 document.addEventListener('change',e=>{
-  if(e.target&&e.target.id==='modalStatusSelect')
-    changeStatus(e.target.dataset.id,e.target.value);
+  if(e.target?.id==='modalStatusSelect') changeStatus(e.target.dataset.id,e.target.value);
 });
-
 document.getElementById('loginBtn').addEventListener('click',login);
 document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 document.getElementById('notifyBtn').addEventListener('click',requestNotify);
+document.getElementById('allowNotifBtn').addEventListener('click',requestNotify);
 document.getElementById('logoutBtn').addEventListener('click',logout);
 document.getElementById('refreshBtn').addEventListener('click',refresh);
 document.getElementById('retryBtn').addEventListener('click',()=>{retryCount=0;hideFirebaseError();startListen();});
@@ -635,10 +594,7 @@ document.getElementById('closeModal').addEventListener('click',closeDetails);
 document.getElementById('detailsModal').addEventListener('click',e=>{if(e.target.id==='detailsModal')closeDetails();});
 document.getElementById('installBtn').addEventListener('click',doInstall);
 document.getElementById('installIconBtn').addEventListener('click',doInstall);
-document.getElementById('allowNotifBtn').addEventListener('click',requestNotify);
-document.getElementById('dismissInstall').addEventListener('click',()=>{
-  document.getElementById('installBanner').classList.remove('show');
-});
+document.getElementById('dismissInstall').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
 
 /* ══ تشغيل ══ */
 initFirebase();

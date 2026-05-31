@@ -1,147 +1,92 @@
 // ════════════════════════════════════════
 //  NCDC Manager — Service Worker v10
-//  يعمل في الخلفية لاستقبال الإشعارات
 // ════════════════════════════════════════
-
 const CACHE_NAME = 'ncdc-manager-v10';
-const FIREBASE_SCRIPTS = [
-  'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js',
-  'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js',
-];
 
-// ── تثبيت Service Worker وتخزين الملفات ──
 self.addEventListener('install', event => {
-  console.log('[SW] Installing...');
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll([
-        './index.html',
-        './manifest.json',
-        './icons/icon-192.png',
-        './icons/icon-512.png',
-      ]).catch(err => console.warn('[SW] Cache addAll error (non-fatal):', err));
-    })
+    caches.open(CACHE_NAME).then(cache =>
+      cache.addAll(['./index.html','./manifest.json','./icon-192.png','./icon-512.png'])
+           .catch(e => console.warn('[SW] cache warn:', e))
+    )
   );
   self.skipWaiting();
 });
 
-// ── تفعيل وحذف الكاش القديم ──
 self.addEventListener('activate', event => {
-  console.log('[SW] Activating...');
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => {
-          console.log('[SW] Deleting old cache:', k);
-          return caches.delete(k);
-        })
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-// ── استقبال طلبات الشبكة (Network First لـ HTML، Cache for rest) ──
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-
-  // تجاهل طلبات Firebase و Google Fonts
-  if (url.hostname.includes('firebasejs') ||
-      url.hostname.includes('googleapis') ||
+  if (url.hostname.includes('googleapis') ||
       url.hostname.includes('gstatic') ||
       url.hostname.includes('firestore') ||
-      url.hostname.includes('firebase')) {
-    return;
-  }
+      url.hostname.includes('firebase')) return;
 
   if (event.request.mode === 'navigate') {
-    // الصفحة الرئيسية: شبكة أولاً ثم الكاش
     event.respondWith(
       fetch(event.request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          return res;
-        })
+        .then(res => { caches.open(CACHE_NAME).then(c => c.put(event.request, res.clone())); return res; })
         .catch(() => caches.match('./index.html'))
     );
   } else {
-    // باقي الموارد: كاش أولاً
     event.respondWith(
       caches.match(event.request).then(cached => cached || fetch(event.request))
     );
   }
 });
 
-// ── استقبال Push Notifications ──
+// ── Push Notification ──
 self.addEventListener('push', event => {
-  console.log('[SW] Push received:', event);
-
-  let data = { title: 'NCDC — لوحة المدير', body: 'وصل بريد جديد', tag: 'ncdc-new' };
-  try {
-    if (event.data) data = { ...data, ...event.data.json() };
-  } catch(e) {
-    if (event.data) data.body = event.data.text();
-  }
-
-  const options = {
-    body:    data.body,
-    icon:    './icons/icon-192.png',
-    badge:   './icons/icon-96.png',
-    tag:     data.tag || 'ncdc-mail',
-    renotify: true,
-    dir:     'rtl',
-    lang:    'ar',
-    vibrate: [200, 100, 200],
-    data:    { url: './index.html?filter=new' },
-    actions: [
-      { action: 'open',    title: 'فتح التطبيق' },
-      { action: 'dismiss', title: 'تجاهل' }
-    ]
-  };
+  let data = { title: 'NCDC — لوحة المدير', body: 'وصل بريد جديد 📬', tag: 'ncdc' };
+  try { if (event.data) data = { ...data, ...event.data.json() }; }
+  catch(e) { if (event.data) data.body = event.data.text(); }
 
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
-});
-
-// ── الضغط على الإشعار ──
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-
-  if (event.action === 'dismiss') return;
-
-  const targetUrl = (event.notification.data && event.notification.data.url)
-    ? event.notification.data.url
-    : './index.html';
-
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-      // إذا التطبيق مفتوح بالفعل — اجعله في الواجهة
-      for (const client of clientList) {
-        if (client.url.includes('ncdc-manager') && 'focus' in client) {
-          return client.focus();
-        }
-      }
-      // افتح نافذة جديدة
-      if (clients.openWindow) return clients.openWindow(targetUrl);
+    self.registration.showNotification(data.title, {
+      body:     data.body,
+      icon:     './icon-192.png',
+      badge:    './icon-96.png',
+      tag:      data.tag || 'ncdc',
+      renotify: true,
+      dir:      'rtl',
+      lang:     'ar',
+      vibrate:  [200, 100, 200],
+      data:     { url: './index.html' }
     })
   );
 });
 
-// ── إشعارات من الصفحة الرئيسية (postMessage) ──
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const c of list) {
+        if (c.url.includes('ncdc-manager') && 'focus' in c) return c.focus();
+      }
+      if (clients.openWindow) return clients.openWindow('./index.html');
+    })
+  );
+});
+
+// ── رسائل من الصفحة ──
 self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
-    const { title, body, tag } = event.data;
-    self.registration.showNotification(title || 'NCDC مدير', {
-      body:    body || 'وصل بريد جديد',
-      icon:    './icons/icon-192.png',
-      badge:   './icons/icon-96.png',
-      tag:     tag || 'ncdc-mail',
+  if (event.data?.type === 'SHOW_NOTIFICATION') {
+    self.registration.showNotification(event.data.title || 'NCDC مدير', {
+      body:     event.data.body || 'وصل بريد جديد',
+      icon:     './icon-192.png',
+      badge:    './icon-96.png',
+      tag:      event.data.tag || 'ncdc',
       renotify: true,
-      dir:     'rtl',
-      vibrate: [180, 80, 180],
-      data:    { url: './index.html' }
+      dir:      'rtl',
+      vibrate:  [180, 80, 180],
+      data:     { url: './index.html' }
     });
   }
 });
