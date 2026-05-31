@@ -1,12 +1,10 @@
-
 // ══════════════════════════════════════════
-//  NCDC Manager — sw.js (No FCM needed)
-//  يراقب Firestore مباشرة من الخلفية
+//  NCDC Manager — sw.js (With Sound)
 // ══════════════════════════════════════════
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js');
 
-const CACHE = 'ncdc-v10';
+const CACHE = 'ncdc-v11';
 const FIREBASE_CONFIG = {
   apiKey:            'AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo',
   authDomain:        'ncdc-mail-a68ff.firebaseapp.com',
@@ -33,40 +31,57 @@ function initDB() {
   }
 }
 
-// ── مراقبة Firestore بالـ polling كل 15 ثانية ──
+// ── صوت الإشعار (Base64 MP3 بسيط — نغمة تنبيه) ──
+// نغمة beep قصيرة مُرمَّزة بـ Base64
+const NOTIFICATION_SOUND = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhgCenp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e////////////////////////////////////////////////////////////////////////////////AAAAAExhdmM1OC41MQAAAAAAAAAAAAAAACQAAAAAAAAAAAM6tR9BAAAAAAAAAAAAAAAAAAAAAP/7kGQAAANUAtBUAAAI2QCqDAAAARBJSmQgIABEEklZiAgAEbf///5mIiJiIiIiJmZmZiIiIiImZmZiIiIiJiIiIiZmZmZiIiIiJiIiIiZmZmZiIiJiJmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiJiIiIiZmZmZiIiIiJiIiIiZmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiZiIiIiZmZmZiIiIiJiIiIiZmZmZiIiJiJmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiJiIiIiZmZmZiIiIiJiIiIiZmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiZiIiIiZmZmZiIiIiJiIiIiZmZmZiIiJiJmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiJiIiIiZmZmZiIiIiJiIiIiZmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiZiIiIiZmZmZiIiIiJiIiIiZmZmZiIiJiJmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiJiIiIiZmZmZiIiIiJiIiIiZmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiZiIiIiZmZmZiIiIiJiIiIiZmZmZiIiJiJmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiJiIiIiZmZmZiIiIiJiIiIiZmZmZiIiIiZiIiIiZmZmZiIiIiJmZmZiIiIiZiIiIiZmZmZiIiIiJiIiIiZmZmZiA==';
+
+// ── إرسال الإشعار مع الصوت ──
+async function showNotifWithSound(title, body, tag) {
+  // إرسال الإشعار
+  await self.registration.showNotification(title, {
+    body,
+    icon:     '/ncdc-manager-mobile/icon-192.png',
+    badge:    '/ncdc-manager-mobile/icon-96.png',
+    tag:      tag || 'ncdc-mail',
+    renotify: true,
+    dir:      'rtl',
+    lang:     'ar',
+    vibrate:  [300, 100, 300, 100, 300],
+    silent:   false,
+    data:     { url: '/ncdc-manager-mobile/index.html' }
+  });
+
+  // تشغيل الصوت عبر إرسال رسالة للصفحة المفتوحة
+  const allClients = await clients.matchAll({ includeUncontrolled: true, type: 'window' });
+  for (const client of allClients) {
+    client.postMessage({ type: 'PLAY_SOUND' });
+  }
+}
+
+// ── مراقبة Firestore كل 15 ثانية ──
 async function checkNewMails() {
   try {
-    const db = initDB();
-    if (!db) return;
+    const database = initDB();
+    if (!database) return;
 
-    const snap = await db.collection('mails')
+    const snap = await database.collection('mails')
       .where('archived', '==', false)
       .get();
 
-    const newMails = snap.docs
-      .map(d => ({ id: d.id, ...d.data() }))
-      .filter(m => m.status === 'new' || m.status === undefined);
-
+    const allMails = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const newMails = allMails.filter(m => !m.status || m.status === 'new');
     const currentCount = newMails.length;
 
     if (lastCount > 0 && currentCount > lastCount) {
-      // يوجد بريد جديد!
       const newest = newMails[0];
-      self.registration.showNotification('وصل بريد جديد 📬', {
-        body: (newest.subject || 'مراسلة جديدة') + ' — ' + (newest.party || newest.from || ''),
-        icon: '/ncdc-manager-mobile/icon-192.png',
-        badge: '/ncdc-manager-mobile/icon-96.png',
-        tag: 'ncdc-new-' + newest.id,
-        renotify: true,
-        dir: 'rtl',
-        lang: 'ar',
-        vibrate: [200, 100, 200, 100, 200],
-        data: { url: '/ncdc-manager-mobile/index.html' }
-      });
+      const title = 'وصل بريد جديد 📬';
+      const body  = (newest.subject || 'مراسلة جديدة') + ' — ' + (newest.party || newest.from || '');
+      await showNotifWithSound(title, body, 'ncdc-' + newest.id);
     }
+
     lastCount = currentCount;
   } catch(e) {
-    console.warn('[SW] Check error:', e);
+    console.warn('[SW] Check error:', e.message);
   }
 }
 
@@ -74,7 +89,7 @@ async function checkNewMails() {
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE).then(c =>
-      c.addAll(['./index.html','./manifest.json','./icon-192.png'])
+      c.addAll(['./index.html', './manifest.json', './icon-192.png'])
        .catch(e => console.warn('[SW] cache:', e))
     )
   );
@@ -119,38 +134,27 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
   const type = event.data?.type;
 
-  // بدء المراقبة عند تسجيل الدخول
   if (type === 'START_WATCH') {
     if (!isWatching) {
       isWatching = true;
-      // أول قراءة لتحديد العدد الحالي بدون إشعار
-      checkNewMails();
-      // ثم مراقبة كل 15 ثانية
+      checkNewMails(); // قراءة أولية
       watchInterval = setInterval(checkNewMails, 15000);
-      console.log('[SW] Started watching Firestore');
+      console.log('[SW] Started watching');
     }
   }
 
-  // إيقاف المراقبة عند الخروج
   if (type === 'STOP_WATCH') {
     isWatching = false;
     if (watchInterval) { clearInterval(watchInterval); watchInterval = null; }
     lastCount = 0;
-    console.log('[SW] Stopped watching');
   }
 
-  // إشعار مباشر من الصفحة (التطبيق مفتوح)
   if (type === 'SHOW_NOTIFICATION') {
-    self.registration.showNotification(event.data.title || 'NCDC مدير', {
-      body:     event.data.body || 'وصل بريد جديد',
-      icon:     '/ncdc-manager-mobile/icon-192.png',
-      badge:    '/ncdc-manager-mobile/icon-96.png',
-      tag:      event.data.tag || 'ncdc',
-      renotify: true,
-      dir:      'rtl',
-      vibrate:  [180, 80, 180],
-      data:     { url: '/ncdc-manager-mobile/index.html' }
-    });
+    showNotifWithSound(
+      event.data.title || 'NCDC مدير 📬',
+      event.data.body  || 'وصل بريد جديد',
+      event.data.tag   || 'ncdc'
+    );
   }
 });
 
