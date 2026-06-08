@@ -250,6 +250,15 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 /* toast */
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 18px;font-weight:800;z-index:999;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center;font-size:14px;pointer-events:none}
 .toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
+
+#empTabForm {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
 </style>
 </head>
 <body>
@@ -525,6 +534,15 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 .fs{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:13px;font-size:15px;outline:none;font-family:Tajawal,sans-serif}
 .fs:focus{border-color:var(--green)}
 .botnav button.emp-on{background:rgba(34,197,94,.12);color:#86efac}
+
+#empTabForm {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
 </style>
 
 <script>
