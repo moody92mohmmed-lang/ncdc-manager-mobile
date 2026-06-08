@@ -19,11 +19,11 @@
 :root{
   --bg:#0f172a;--card:#1e293b;--card2:#273449;
   --line:rgba(148,163,184,.2);--txt:#f8fafc;--mut:#94a3b8;
-  --blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444
+  --blue:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+  --purple:#a855f7
 }
 body{background:var(--bg);color:var(--txt);min-height:100vh}
 
-/* ── الشاشات ── */
 .screen{display:none;min-height:100vh}
 
 /* ── شاشة الاختيار ── */
@@ -42,8 +42,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   background:var(--card);border:1px solid var(--line);border-radius:24px;
   padding:22px 18px;display:flex;align-items:center;gap:16px;
   cursor:pointer;transition:transform .15s,background .2s;
-  -webkit-tap-highlight-color:transparent;user-select:none
-}
+  -webkit-tap-highlight-color:transparent;user-select:none}
 .rl-card:active{transform:scale(.96)}
 .rl-card.mgr{border-color:rgba(59,130,246,.4)}
 .rl-card.mgr:active{background:rgba(59,130,246,.1)}
@@ -57,117 +56,46 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 .rl-info span{font-size:12px;color:var(--mut);line-height:1.65}
 .rl-arr{color:var(--mut);font-size:22px;font-weight:300}
 
-/* ── بانر التثبيت (عام) ── */
-#installModal{
-  position:fixed;inset:0;background:rgba(2,6,23,.88);
-  z-index:900;display:none;align-items:flex-end;justify-content:center
-}
+/* ── بانر التثبيت ── */
+#installModal{position:fixed;inset:0;background:rgba(2,6,23,.88);z-index:900;display:none;align-items:flex-end;justify-content:center}
 #installModal.show{display:flex}
-.inst-sheet{
-  width:100%;max-width:440px;background:var(--card);
-  border:1px solid rgba(59,130,246,.35);border-radius:28px 28px 0 0;
-  padding:28px 22px 36px;text-align:center
-}
+.inst-sheet{width:100%;max-width:440px;background:var(--card);border:1px solid rgba(59,130,246,.35);border-radius:28px 28px 0 0;padding:28px 22px 36px;text-align:center}
 .inst-icon{font-size:52px;margin-bottom:14px}
 .inst-title{font-size:20px;font-weight:800;margin-bottom:8px}
 .inst-sub{font-size:13px;color:var(--mut);line-height:1.8;margin-bottom:22px}
-.inst-btn{
-  width:100%;border:0;border-radius:16px;background:var(--blue);
-  color:#fff;padding:15px;font-size:16px;font-weight:800;
-  cursor:pointer;font-family:Tajawal,sans-serif;margin-bottom:10px
-}
-.inst-skip{
-  width:100%;border:1px solid var(--line);border-radius:16px;
-  background:transparent;color:var(--mut);padding:12px;
-  font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif
-}
-/* iOS */
-.ios-steps{
-  background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);
-  border-radius:16px;padding:16px;margin-bottom:20px;text-align:right
-}
+.inst-btn{width:100%;border:0;border-radius:16px;background:var(--blue);color:#fff;padding:15px;font-size:16px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;margin-bottom:10px}
+.inst-skip{width:100%;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--mut);padding:12px;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif}
+.ios-steps{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:16px;padding:16px;margin-bottom:20px;text-align:right}
 .ios-steps p{font-size:13px;color:#93c5fd;line-height:2}
 
-/* ── تسجيل الدخول ── */
+/* ── دخول ── */
 #S_mgrLogin,#S_empLogin{align-items:center;justify-content:center;padding:18px}
-.login-card{
-  width:100%;max-width:390px;background:var(--card);
-  border:1px solid var(--line);border-radius:26px;padding:28px 20px;
-  box-shadow:0 16px 50px rgba(0,0,0,.3)
-}
-.lc-logo{
-  width:68px;height:68px;border-radius:22px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:34px;margin:0 auto 14px
-}
+.login-card{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:28px 20px;box-shadow:0 16px 50px rgba(0,0,0,.3)}
+.lc-logo{width:68px;height:68px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 14px}
 .lc-logo.mgr{background:rgba(59,130,246,.16)}
 .lc-logo.emp{background:rgba(34,197,94,.16)}
 .lc-title{text-align:center;font-size:22px;font-weight:800}
 .lc-sub{text-align:center;color:var(--mut);font-size:13px;margin-top:6px;line-height:1.7}
-.lc-inp{
-  width:100%;margin-top:16px;background:var(--card2);
-  border:1px solid var(--line);border-radius:14px;
-  color:var(--txt);padding:14px;font-size:17px;outline:none;
-  text-align:center;font-family:Tajawal,sans-serif
-}
-.lc-inp.rtl{text-align:right}
+.lc-inp{width:100%;margin-top:16px;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font-size:17px;outline:none;text-align:center;font-family:Tajawal,sans-serif}
 .lc-inp:focus{border-color:var(--blue)}
-.lc-sel{
-  width:100%;margin-top:10px;background:#0f172a;
-  border:1px solid var(--line);border-radius:14px;
-  color:var(--txt);padding:14px;font-size:15px;
-  outline:none;font-family:Tajawal,sans-serif
-}
-.lc-sel:focus{border-color:var(--green)}
-.lc-btn{
-  width:100%;margin-top:14px;border:0;border-radius:14px;
-  color:#fff;padding:14px;font-size:16px;font-weight:800;
-  cursor:pointer;font-family:Tajawal,sans-serif
-}
+.lc-btn{width:100%;margin-top:14px;border:0;border-radius:14px;color:#fff;padding:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif}
 .lc-btn.mgr-btn{background:var(--blue)}
 .lc-btn.emp-btn{background:var(--green)}
-.lc-back{
-  width:100%;margin-top:10px;border:1px solid var(--line);
-  border-radius:14px;background:transparent;color:var(--mut);
-  padding:11px;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif
-}
-.err-box{
-  background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);
-  color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;
-  text-align:center;font-size:13px;display:none
-}
+.lc-back{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:14px;background:transparent;color:var(--mut);padding:11px;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif}
+.err-box{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.28);color:#fca5a5;border-radius:13px;padding:10px;margin-top:12px;text-align:center;font-size:13px;display:none}
 
 /* ── شريط علوي ── */
-.topbar{
-  position:sticky;top:0;
-  background:rgba(15,23,42,.96);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line);z-index:10
-}
-.topbar-in{
-  max-width:720px;margin:0 auto;padding:13px 14px;
-  display:flex;align-items:center;gap:10px
-}
-.tb-icon{
-  width:44px;height:44px;border-radius:16px;
-  display:flex;align-items:center;justify-content:center;font-size:22px
-}
+.topbar{position:sticky;top:0;background:rgba(15,23,42,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:10}
+.topbar-in{max-width:720px;margin:0 auto;padding:13px 14px;display:flex;align-items:center;gap:10px}
+.tb-icon{width:44px;height:44px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .tb-icon.mgr-ic{background:rgba(59,130,246,.16)}
-.tb-icon.emp-ic{background:rgba(34,197,94,.16)}
 .tb-head{flex:1}
 .tb-head h1{font-size:17px;font-weight:800}
 .tb-head p{font-size:11px;color:var(--mut);margin-top:2px}
-.ib{
-  border:1px solid var(--line);background:var(--card);color:var(--txt);
-  width:42px;height:42px;border-radius:14px;font-size:18px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0
-}
+.ib{border:1px solid var(--line);background:var(--card);color:var(--txt);width:42px;height:42px;border-radius:14px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* ── نقطة الاتصال ── */
-#connDot{
-  display:inline-block;width:8px;height:8px;border-radius:50%;
-  margin-left:5px;background:#94a3b8;vertical-align:middle;transition:background .4s
-}
+/* ── نقطة اتصال ── */
+#connDot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:5px;background:#94a3b8;vertical-align:middle;transition:background .4s}
 #connDot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
 #connDot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
 #connDot.wait{background:var(--amber);animation:blink 1s infinite}
@@ -176,16 +104,10 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 /* ── تطبيق المدير ── */
 #S_mgr{flex-direction:column;padding-bottom:78px}
 .wrap{max-width:720px;margin:0 auto;padding:14px}
-.err-banner{
-  border-radius:14px;padding:11px 14px;margin-bottom:12px;
-  display:none;align-items:center;gap:10px
-}
+.err-banner{border-radius:14px;padding:11px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
 .err-banner.show{display:flex}
 .err-banner span{flex:1;font-size:13px;line-height:1.6}
-.eb-btn{
-  border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;
-  cursor:pointer;white-space:nowrap;font-family:Tajawal,sans-serif
-}
+.eb-btn{border-radius:10px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:Tajawal,sans-serif}
 #fbErrBanner{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35)}
 #fbErrBanner span{color:#fca5a5}
 #retryBtn{background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
@@ -198,21 +120,11 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 .stat .n{font-size:28px;font-weight:800}.stat .l{color:var(--mut);font-size:12px;margin-top:2px}
 
 .search-row{display:flex;gap:8px;margin:14px 0 10px}
-.search-row input{
-  flex:1;background:var(--card);border:1px solid var(--line);
-  border-radius:16px;color:var(--txt);padding:12px 13px;
-  outline:none;font-family:Tajawal,sans-serif
-}
+.search-row input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--txt);padding:12px 13px;outline:none;font-family:Tajawal,sans-serif}
 .search-row input:focus{border-color:var(--blue)}
-.search-row button{
-  width:48px;border:1px solid var(--line);border-radius:16px;
-  background:var(--card);color:var(--txt);font-size:18px;cursor:pointer
-}
+.search-row button{width:48px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--txt);font-size:18px;cursor:pointer}
 .tabs{display:flex;gap:8px;overflow:auto;margin:10px 0 14px;padding-bottom:4px}
-.tab{
-  white-space:nowrap;border:1px solid var(--line);background:var(--card);
-  color:var(--mut);padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer
-}
+.tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--mut);padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer}
 .tab.on{background:rgba(59,130,246,.18);color:#93c5fd;border-color:rgba(59,130,246,.35)}
 
 .mail-card{background:var(--card);border:1px solid var(--line);border-radius:22px;margin-bottom:12px;overflow:hidden}
@@ -227,228 +139,122 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 .b-arch{background:rgba(148,163,184,.15);color:#cbd5e1}
 .b-type{background:rgba(59,130,246,.15);color:#93c5fd}
 .b-emp{background:rgba(168,85,247,.15);color:#d8b4fe}
+/* ✅ شارة الأولوية */
+.b-urgent{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+.b-normal{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.25)}
+/* ✅ شارة التعليق */
+.b-comment{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.3)}
 .mc-foot{background:rgba(15,23,42,.35);border-top:1px solid var(--line);padding:10px}
-.view-btn{
-  width:100%;border:1px solid var(--line);border-radius:13px;
-  background:var(--card2);color:var(--txt);padding:12px;
-  font-weight:800;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif
-}
-.empty,.loading{
-  text-align:center;color:var(--mut);padding:45px 10px;
-  background:var(--card);border:1px solid var(--line);border-radius:22px
-}
+.view-btn{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--txt);padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:Tajawal,sans-serif}
+.empty,.loading{text-align:center;color:var(--mut);padding:45px 10px;background:var(--card);border:1px solid var(--line);border-radius:22px}
 .dis{opacity:.5;pointer-events:none}
 
 /* ── شريط سفلي ── */
-.botbar{
-  position:fixed;bottom:0;left:0;right:0;
-  background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20
-}
+.botbar{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.96);border-top:1px solid var(--line);z-index:20}
 .botnav{max-width:720px;margin:0 auto;display:grid;gap:4px;padding:8px}
 .botnav.mgr{grid-template-columns:repeat(4,1fr)}
-.botnav.emp{grid-template-columns:repeat(3,1fr)}
-.botnav button{
-  background:transparent;border:0;color:var(--mut);
-  padding:8px 4px;border-radius:14px;font-size:12px;
-  cursor:pointer;font-family:Tajawal,sans-serif
-}
+.botnav button{background:transparent;border:0;color:var(--mut);padding:8px 4px;border-radius:14px;font-size:12px;cursor:pointer;font-family:Tajawal,sans-serif}
 .botnav button.on{background:rgba(59,130,246,.14);color:#93c5fd}
-.botnav button.emp-on{background:rgba(34,197,94,.12);color:#86efac}
 .botnav b{display:block;font-size:19px;margin-bottom:2px}
 
 /* ── Modal تفاصيل ── */
-.modal-bg{
-  position:fixed;inset:0;background:rgba(2,6,23,.82);
-  z-index:60;display:none;align-items:flex-end;justify-content:center
-}
+.modal-bg{position:fixed;inset:0;background:rgba(2,6,23,.82);z-index:60;display:none;align-items:flex-end;justify-content:center}
 .modal-bg.show{display:flex}
-.modal-sheet{
-  width:100%;max-width:720px;max-height:92vh;overflow:auto;
-  background:var(--card);border:1px solid var(--line);
-  border-radius:24px 24px 0 0;padding:16px;
-  box-shadow:0 -20px 60px rgba(0,0,0,.35)
-}
+.modal-sheet{width:100%;max-width:720px;max-height:92vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -20px 60px rgba(0,0,0,.35)}
 .modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
 .modal-head h2{font-size:18px;font-weight:800}
-.close-btn{
-  width:40px;height:40px;border-radius:13px;
-  border:1px solid var(--line);background:var(--card2);
-  color:#fff;font-size:20px;cursor:pointer
-}
-.drow{
-  background:rgba(15,23,42,.35);border:1px solid var(--line);
-  border-radius:14px;padding:11px;margin-bottom:8px
-}
+.close-btn{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:20px;cursor:pointer}
+.drow{background:rgba(15,23,42,.35);border:1px solid var(--line);border-radius:14px;padding:11px;margin-bottom:8px}
 .drow b{display:block;color:#93c5fd;font-size:12px;margin-bottom:4px}
 .drow span{font-size:14px;line-height:1.7}
-.status-box{
-  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);
-  border-radius:16px;padding:12px;margin:10px 0
-}
+.status-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:16px;padding:12px;margin:10px 0}
 .status-box label{font-size:14px;font-weight:800;display:block;margin-bottom:6px}
-.modal-sel{
-  width:100%;background:#0f172a;border:1px solid var(--line);
-  border-radius:14px;color:#fff;padding:12px;font-size:16px;
-  outline:none;font-family:Tajawal,sans-serif
-}
+.modal-sel{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:#fff;padding:12px;font-size:16px;outline:none;font-family:Tajawal,sans-serif}
 .modal-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.img-preview-m{
-  margin-top:10px;background:#020617;border-radius:16px;
-  overflow:hidden;border:1px solid var(--line);cursor:pointer
-}
+.img-preview-m{margin-top:10px;background:#020617;border-radius:16px;overflow:hidden;border:1px solid var(--line);cursor:pointer}
 .img-preview-m img{display:block;width:100%;height:auto}
 .img-preview-m p{text-align:center;padding:8px;font-size:12px;color:var(--mut)}
 
+/* ✅ صندوق التعليق (التهميشة) */
+.comment-box{
+  background:rgba(168,85,247,.07);
+  border:1px solid rgba(168,85,247,.3);
+  border-radius:16px;padding:14px;margin:10px 0
+}
+.comment-box-label{
+  font-size:13px;font-weight:800;color:#d8b4fe;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px
+}
+.comment-box-label span{font-size:16px}
+.comment-textarea{
+  width:100%;background:#0f172a;border:1px solid rgba(168,85,247,.3);
+  border-radius:12px;color:var(--txt);padding:11px;font-size:14px;
+  outline:none;font-family:Tajawal,sans-serif;resize:vertical;
+  min-height:80px;line-height:1.7
+}
+.comment-textarea:focus{border-color:var(--purple)}
+.comment-save-btn{
+  width:100%;margin-top:8px;border:0;border-radius:12px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  color:#fff;padding:11px;font-size:14px;font-weight:800;
+  cursor:pointer;font-family:Tajawal,sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:6px
+}
+.comment-saved{
+  background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);
+  border-radius:12px;padding:11px;font-size:13px;color:#d8b4fe;
+  line-height:1.7;white-space:pre-wrap;word-break:break-word
+}
+/* ✅ زر الحذف */
+.del-btn-full{
+  width:100%;margin-top:8px;border:1px solid rgba(239,68,68,.35);border-radius:13px;
+  background:rgba(239,68,68,.1);color:#fca5a5;padding:12px;
+  font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:6px
+}
+.del-btn-full:active{background:rgba(239,68,68,.25)}
+
+/* confirm حذف */
+.confirm-overlay{position:fixed;inset:0;background:rgba(2,6,23,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.show{display:flex}
+.confirm-sheet{width:100%;max-width:360px;background:var(--card);border:1px solid rgba(239,68,68,.35);border-radius:22px;padding:24px;text-align:center}
+.confirm-icon{font-size:44px;margin-bottom:12px}
+.confirm-title{font-size:18px;font-weight:800;color:#fca5a5;margin-bottom:8px}
+.confirm-sub{font-size:13px;color:var(--mut);line-height:1.7;margin-bottom:20px}
+.confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.confirm-yes{border:0;border-radius:13px;background:var(--red);color:#fff;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif}
+.confirm-no{border:1px solid var(--line);border-radius:13px;background:transparent;color:var(--mut);padding:13px;font-size:15px;cursor:pointer;font-family:Tajawal,sans-serif}
+
 /* ── عارض الصور ── */
-#imgViewer{
-  position:fixed;inset:0;background:rgba(0,0,0,.95);
-  z-index:200;display:none;flex-direction:column
-}
+#imgViewer{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:200;display:none;flex-direction:column}
 #imgViewer.show{display:flex}
-#ivHead{
-  display:flex;align-items:center;gap:10px;padding:12px 16px;
-  background:rgba(15,23,42,.9);flex-shrink:0
-}
-#ivTitle{
-  flex:1;font-size:14px;font-weight:700;color:#f8fafc;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-}
-#ivBody{
-  flex:1;overflow:auto;display:flex;
-  align-items:center;justify-content:center;padding:12px
-}
+#ivHead{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(15,23,42,.9);flex-shrink:0}
+#ivTitle{flex:1;font-size:14px;font-weight:700;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ivBody{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:12px}
 #ivBody img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
-.vbtn{
-  border:none;border-radius:10px;padding:8px 14px;font-size:13px;
-  font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;
-  display:flex;align-items:center;gap:5px
-}
+.vbtn{border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;gap:5px}
 .vbtn-close{background:rgba(239,68,68,.2);color:#fca5a5}
 .vbtn-dl{background:rgba(34,197,94,.15);color:#86efac}
 
-/* ── تطبيق الموظف ── */
-#S_emp{flex-direction:column;padding-bottom:78px}
-.emp-card{
-  background:var(--card);border:1px solid rgba(34,197,94,.22);
-  border-radius:22px;padding:16px;margin-bottom:14px
-}
-.emp-card h3{font-size:15px;font-weight:800;color:#86efac;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.fl{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px;font-weight:700}
-.fi{
-  width:100%;background:var(--card2);border:1px solid var(--line);
-  border-radius:14px;color:var(--txt);padding:13px;font-size:15px;
-  outline:none;font-family:Tajawal,sans-serif;resize:none
-}
-.fi:focus{border-color:var(--green)}
-.fs{
-  width:100%;background:#0f172a;border:1px solid var(--line);
-  border-radius:14px;color:var(--txt);padding:13px;font-size:15px;
-  outline:none;font-family:Tajawal,sans-serif
-}
-.fs:focus{border-color:var(--green)}
-
-/* منطقة الصورة */
-.cam-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.cam-btn{
-  border-radius:14px;padding:14px;font-size:14px;font-weight:800;
-  cursor:pointer;font-family:Tajawal,sans-serif;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  border:1.5px solid
-}
-.cam-btn.camera{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.4);color:#86efac}
-.cam-btn.gallery{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.4);color:#93c5fd}
-.img-zone{
-  border:2px dashed rgba(34,197,94,.3);border-radius:18px;
-  padding:24px;text-align:center;background:rgba(34,197,94,.03)
-}
-.iz-icon{font-size:36px;margin-bottom:8px}
-.iz-txt{font-size:14px;color:var(--mut)}
-.iz-sub{font-size:11px;color:#475569;margin-top:4px}
-#imgPrevWrap{display:none}
-#imgPrevWrap img{width:100%;border-radius:14px;border:1px solid var(--line);display:block}
-.rem-btn{
-  width:100%;margin-top:10px;border:1px solid rgba(239,68,68,.3);
-  border-radius:13px;background:rgba(239,68,68,.07);color:#fca5a5;
-  padding:11px;font-size:14px;font-weight:800;cursor:pointer;
-  font-family:Tajawal,sans-serif
-}
-#imgSzTxt{font-size:11px;color:var(--mut);text-align:center;margin-top:6px}
-
-.submit-btn{
-  width:100%;border:0;border-radius:16px;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-  color:#fff;padding:16px;font-size:17px;font-weight:800;
-  cursor:pointer;font-family:Tajawal,sans-serif;margin-top:6px;
-  box-shadow:0 4px 20px rgba(34,197,94,.22)
-}
-.submit-btn:disabled{opacity:.5;pointer-events:none}
-
-/* مراسلاتي */
-.my-card{
-  background:var(--card);border:1px solid rgba(34,197,94,.18);
-  border-radius:20px;margin-bottom:10px;overflow:hidden
-}
-.my-body{padding:14px}
-.my-subj{font-size:15px;font-weight:800;margin:8px 0 6px}
-.my-meta{font-size:12px;color:var(--mut);line-height:1.8}
-.my-img{width:100%;border-radius:12px;border:1px solid var(--line);margin-top:10px;display:block;cursor:pointer}
-
-/* نجاح الإرسال */
-#successOverlay{
-  position:fixed;inset:0;background:rgba(2,6,23,.9);
-  z-index:500;display:none;align-items:center;justify-content:center;
-  flex-direction:column;gap:14px
-}
-#successOverlay.show{display:flex}
-.succ-circle{
-  width:90px;height:90px;border-radius:50%;
-  background:rgba(34,197,94,.15);border:2px solid var(--green);
-  display:flex;align-items:center;justify-content:center;font-size:44px;
-  animation:pop .4s ease
-}
-@keyframes pop{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-.succ-title{font-size:22px;font-weight:800;color:#86efac}
-.succ-sub{font-size:13px;color:var(--mut);text-align:center;max-width:280px;line-height:1.7}
-.succ-btn{
-  background:var(--green);color:#fff;border:none;border-radius:14px;
-  padding:13px 32px;font-size:15px;font-weight:800;
-  cursor:pointer;font-family:Tajawal,sans-serif;margin-top:4px
-}
-
-/* إشعار بريد جديد */
-#newMailAlert{
-  position:fixed;top:0;left:0;right:0;z-index:800;
-  background:linear-gradient(135deg,#1e3a5f,#0f2d4a);
-  border-bottom:3px solid var(--green);
-  padding:14px 16px;display:none;
-  animation:slideDown .35s ease
-}
+/* ── إشعار بريد جديد ── */
+#newMailAlert{position:fixed;top:0;left:0;right:0;z-index:800;background:linear-gradient(135deg,#1e3a5f,#0f2d4a);border-bottom:3px solid var(--green);padding:14px 16px;display:none;animation:slideDown .35s ease}
 #newMailAlert.show{display:block}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 .nma-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
-.nma-icon{font-size:28px;flex-shrink:0;animation:ring .5s ease .2s}
-@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(-15deg)}75%{transform:rotate(15deg)}}
+.nma-icon{font-size:28px;flex-shrink:0}
 .nma-txt{flex:1}
 .nma-title{font-size:14px;font-weight:800;color:#86efac}
 .nma-sub{font-size:12px;color:#94a3b8;margin-top:2px}
 .nma-close{background:transparent;border:none;color:#94a3b8;font-size:22px;cursor:pointer;padding:0;line-height:1}
 
 /* toast */
-.toast{
-  position:fixed;left:50%;bottom:90px;transform:translateX(-50%);
-  background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);
-  border-radius:14px;padding:11px 18px;font-weight:800;z-index:999;
-  box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;
-  text-align:center;font-size:14px;pointer-events:none
-}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#052e16;color:#bbf7d0;border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 18px;font-weight:800;z-index:999;box-shadow:0 10px 40px rgba(0,0,0,.32);min-width:220px;text-align:center;font-size:14px;pointer-events:none}
 .toast.bad{background:#450a0a;color:#fecaca;border-color:rgba(239,68,68,.35)}
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════
-  شاشة اختيار الدور
-════════════════════════════ -->
+<!-- ════ شاشة اختيار الدور ════ -->
 <div id="S_role" class="screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
   <div class="rl-logo">
     <div class="rl-shield">🏥</div>
@@ -475,9 +281,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   </div>
 </div>
 
-<!-- ════════════════════════════
-  شاشة دخول المدير
-════════════════════════════ -->
+<!-- ════ دخول المدير ════ -->
 <div id="S_mgrLogin" class="screen">
   <div class="login-card">
     <div class="lc-logo mgr">🛡️</div>
@@ -490,9 +294,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   </div>
 </div>
 
-<!-- ════════════════════════════
-  شاشة دخول الموظف
-════════════════════════════ -->
+<!-- ════ دخول الموظف ════ -->
 <div id="S_empLogin" class="screen">
   <div class="login-card">
     <div class="lc-logo emp">👤</div>
@@ -503,9 +305,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   </div>
 </div>
 
-<!-- ════════════════════════════
-  تطبيق المدير
-════════════════════════════ -->
+<!-- ════ تطبيق المدير ════ -->
 <div id="S_mgr" class="screen">
   <div class="topbar">
     <div class="topbar-in">
@@ -560,25 +360,22 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   </div>
 </div>
 
-<!-- ════════════════════════════
-  تطبيق الموظف
-════════════════════════════ -->
+<!-- ════ تطبيق الموظف ════ -->
 <div id="S_emp" class="screen">
   <div class="topbar">
     <div class="topbar-in">
-      <div class="tb-icon emp-ic">👤</div>
+      <div class="tb-icon" style="background:rgba(34,197,94,.16)">👤</div>
       <div class="tb-head">
-        <h1 id="empTopName">موظف</h1>
+        <h1>موظف</h1>
         <p style="color:#86efac;font-size:11px;margin-top:2px">إدارة التطعيمات</p>
       </div>
       <button class="ib" onclick="logoutEmp()" title="خروج">↩</button>
     </div>
   </div>
 
-  <!-- تبويب: نموذج جديد -->
   <div class="wrap" id="empTabForm">
-    <div class="emp-card">
-      <h3>✉️ إنشاء مراسلة جديدة</h3>
+    <div style="background:var(--card);border:1px solid rgba(34,197,94,.22);border-radius:22px;padding:16px;margin-bottom:14px">
+      <h3 style="font-size:15px;font-weight:800;color:#86efac;margin-bottom:14px;display:flex;align-items:center;gap:8px">✉️ إنشاء مراسلة جديدة</h3>
       <label class="fl">نوع المراسلة *</label>
       <select id="fType" class="fs"><option value="in">وارد</option><option value="out">صادر</option></select>
       <label class="fl">الموضوع *</label>
@@ -589,33 +386,41 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
       <input id="fDate" class="fi" type="date"/>
       <label class="fl">الجهة المُرسِلة / المُستقبِلة *</label>
       <input id="fParty" class="fi" type="text" placeholder="اسم الجهة..."/>
+
+      <!-- ✅ خيار الأولوية للموظف -->
+      <label class="fl">الأولوية *</label>
+      <select id="fPriority" class="fs">
+        <option value="normal">🟡 عادي</option>
+        <option value="urgent">🔴 عاجل</option>
+      </select>
+
       <label class="fl">ملاحظات (اختياري)</label>
       <textarea id="fNotes" class="fi" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
     </div>
 
-    <div class="emp-card">
-      <h3>📷 صورة / مرفق المراسلة</h3>
-      <div class="cam-btns">
-        <button class="cam-btn camera" onclick="trigCam()">📷 كاميرا</button>
-        <button class="cam-btn gallery" onclick="trigGal()">🖼️ معرض الصور</button>
+    <div style="background:var(--card);border:1px solid rgba(34,197,94,.22);border-radius:22px;padding:16px;margin-bottom:14px">
+      <h3 style="font-size:15px;font-weight:800;color:#86efac;margin-bottom:14px;display:flex;align-items:center;gap:8px">📷 صورة / مرفق المراسلة</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <button style="border-radius:14px;padding:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(34,197,94,.1);border:1.5px solid rgba(34,197,94,.4);color:#86efac" onclick="trigCam()">📷 كاميرا</button>
+        <button style="border-radius:14px;padding:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(59,130,246,.1);border:1.5px solid rgba(59,130,246,.4);color:#93c5fd" onclick="trigGal()">🖼️ معرض الصور</button>
       </div>
       <input id="camInput" type="file" accept="image/*" capture="environment" style="display:none"/>
       <input id="galInput" type="file" accept="image/*,application/pdf" style="display:none"/>
-      <div id="imgPrevWrap">
-        <img id="imgPrev" src="" alt="معاينة"/>
-        <div id="imgSzTxt"></div>
-        <button class="rem-btn" onclick="remImg()">🗑️ حذف الصورة</button>
+      <div id="imgPrevWrap" style="display:none">
+        <img id="imgPrev" src="" alt="معاينة" style="width:100%;border-radius:14px;border:1px solid var(--line);display:block"/>
+        <div id="imgSzTxt" style="font-size:11px;color:var(--mut);text-align:center;margin-top:6px"></div>
+        <button style="width:100%;margin-top:10px;border:1px solid rgba(239,68,68,.3);border-radius:13px;background:rgba(239,68,68,.07);color:#fca5a5;padding:11px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif" onclick="remImg()">🗑️ حذف الصورة</button>
       </div>
       <div id="imgZoneEmpty">
-        <div class="img-zone" onclick="trigGal()">
-          <div class="iz-icon">📄</div>
-          <div class="iz-txt">لم يتم إرفاق صورة بعد</div>
-          <div class="iz-sub">اضغط هنا أو استخدم أزرار الكاميرا</div>
+        <div style="border:2px dashed rgba(34,197,94,.3);border-radius:18px;padding:24px;text-align:center;background:rgba(34,197,94,.03)" onclick="trigGal()">
+          <div style="font-size:36px;margin-bottom:8px">📄</div>
+          <div style="font-size:14px;color:var(--mut)">لم يتم إرفاق صورة بعد</div>
+          <div style="font-size:11px;color:#475569;margin-top:4px">اضغط هنا أو استخدم أزرار الكاميرا</div>
         </div>
       </div>
     </div>
 
-    <button class="submit-btn" id="submitBtn" onclick="submitMail()">📤 إرسال المراسلة</button>
+    <button style="width:100%;border:0;border-radius:16px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;padding:16px;font-size:17px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;margin-top:6px;box-shadow:0 4px 20px rgba(34,197,94,.22)" id="submitBtn" onclick="submitMail()">📤 إرسال المراسلة</button>
     <div style="height:20px"></div>
   </div>
 
@@ -623,13 +428,13 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   <div class="wrap" id="empTabMy" style="display:none">
     <div style="margin-bottom:14px">
       <div style="font-size:15px;font-weight:800;margin-bottom:4px">📋 مراسلاتي</div>
-      <div style="font-size:12px;color:var(--mut)">المراسلات التي أرسلتها مع حالاتها</div>
+      <div style="font-size:12px;color:var(--mut)">المراسلات التي أرسلتها مع حالاتها وتعليقات المدير</div>
     </div>
     <div id="myList" class="loading">جاري التحميل...</div>
   </div>
 
   <div class="botbar">
-    <div class="botnav emp">
+    <div class="botnav" style="grid-template-columns:repeat(3,1fr)">
       <button id="empBtnNew" class="emp-on" onclick="empTab('form')"><b>✉️</b>مراسلة جديدة</button>
       <button id="empBtnMy" onclick="empTab('my')"><b>📋</b>مراسلاتي</button>
       <button onclick="logoutEmp()"><b>↩</b>خروج</button>
@@ -645,6 +450,19 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
       <button class="close-btn" onclick="closeDetail()">×</button>
     </div>
     <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- ════ تأكيد الحذف ════ -->
+<div id="confirmDelete" class="confirm-overlay">
+  <div class="confirm-sheet">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title">تأكيد الحذف</div>
+    <div class="confirm-sub">هل أنت متأكد من حذف هذه المراسلة نهائياً؟<br>لا يمكن التراجع عن هذا الإجراء.</div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="confirmYesBtn">نعم، احذف</button>
+      <button class="confirm-no" onclick="closeConfirm()">إلغاء</button>
+    </div>
   </div>
 </div>
 
@@ -675,11 +493,7 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   <div class="inst-sheet" id="instSheetAndroid">
     <div class="inst-icon">📲</div>
     <div class="inst-title">تثبيت التطبيق</div>
-    <div class="inst-sub">
-      ثبّت تطبيق NCDC على هاتفك للوصول السريع<br>
-      واستقبال إشعارات البريد الجديد فوراً<br>
-      حتى عندما يكون التطبيق مغلقاً
-    </div>
+    <div class="inst-sub">ثبّت تطبيق NCDC على هاتفك للوصول السريع<br>واستقبال إشعارات البريد الجديد فوراً</div>
     <button class="inst-btn" id="doInstallBtn">📲 تثبيت الآن</button>
     <button class="inst-skip" onclick="skipInstall()">ليس الآن</button>
   </div>
@@ -696,20 +510,30 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 </div>
 
 <!-- ════ نجاح الإرسال ════ -->
-<div id="successOverlay">
-  <div class="succ-circle">✓</div>
-  <div class="succ-title">تم إرسال المراسلة!</div>
-  <div class="succ-sub">وصلت مراسلتك إلى المدير بنجاح<br>يمكنك متابعة حالتها في تبويب "مراسلاتي"</div>
-  <button class="succ-btn" onclick="closeSuccess()">حسناً</button>
+<div id="successOverlay" style="position:fixed;inset:0;background:rgba(2,6,23,.9);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px">
+  <div style="width:90px;height:90px;border-radius:50%;background:rgba(34,197,94,.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:44px;animation:pop .4s ease">✓</div>
+  <div style="font-size:22px;font-weight:800;color:#86efac">تم إرسال المراسلة!</div>
+  <div style="font-size:13px;color:var(--mut);text-align:center;max-width:280px;line-height:1.7">وصلت مراسلتك إلى المدير بنجاح<br>يمكنك متابعة حالتها في تبويب "مراسلاتي"</div>
+  <button style="background:var(--green);color:#fff;border:none;border-radius:14px;padding:13px 32px;font-size:15px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif;margin-top:4px" onclick="closeSuccess()">حسناً</button>
 </div>
+
+<style>
+@keyframes pop{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.fl{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px;font-weight:700}
+.fi{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:13px;font-size:15px;outline:none;font-family:Tajawal,sans-serif;resize:none}
+.fi:focus{border-color:var(--green)}
+.fs{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:13px;font-size:15px;outline:none;font-family:Tajawal,sans-serif}
+.fs:focus{border-color:var(--green)}
+.botnav button.emp-on{background:rgba(34,197,94,.12);color:#86efac}
+</style>
 
 <script>
 /* ══════════════════════════════════════════════
-   NCDC v11 — Manager + Employee — Fixed
+   NCDC v12 — مع التعليق + الحذف + الأولوية
 ══════════════════════════════════════════════ */
-const MGR_PASS   = '1821992';
-const COLL       = 'mails';
-const RETRY_MS   = 5000;
+const MGR_PASS = '1821992';
+const COLL     = 'mails';
+const RETRY_MS = 5000;
 
 const fbCfg = {
   apiKey:            'AIzaSyB-zqUZQ5u9AUKislLLl-KAGLoN9nairEo',
@@ -724,10 +548,11 @@ let db=null, unsub=null, mails=[], filt='all', srch='';
 let firstLoad=true, knownIds=new Set();
 let retryTimer=null, retryCount=0;
 let deferredPrompt=null;
-let empInfo={name:'',dept:''};
+let empInfo={name:'موظف',dept:'إدارة التطعيمات'};
 let attachedImg=null, attachedName='';
 let currentRole=null;
 let viewerSrc='', viewerName='';
+let pendingDeleteId=null;
 
 /* ── init ── */
 function initFB(){
@@ -743,57 +568,37 @@ async function regSW(){
   try{ await navigator.serviceWorker.register('./sw.js',{scope:'./'});}catch(e){}
 }
 
-/* ══ شاشة التثبيت ══ */
+/* ══ التثبيت ══ */
 function setupInstall(){
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isSA=window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone===true;
-
-  if(isSA) return; // مثبّت بالفعل
-
+  if(isSA) return;
   if(isIOS){
-    // iOS: اعرض التلميح فوراً
     document.getElementById('instSheetAndroid').style.display='none';
     document.getElementById('instSheetIOS').style.display='block';
     setTimeout(showInstallModal,800);
     return;
   }
-
-  // Android/Desktop: انتظر حدث beforeinstallprompt
   window.addEventListener('beforeinstallprompt',e=>{
-    e.preventDefault();
-    deferredPrompt=e;
-    // اعرض بانر التثبيت بعد ثانية
+    e.preventDefault(); deferredPrompt=e;
     setTimeout(showInstallModal,800);
   });
-
   window.addEventListener('appinstalled',()=>{
-    hideInstallModal();
-    deferredPrompt=null;
+    hideInstallModal(); deferredPrompt=null;
     toast('✓ تم تثبيت التطبيق بنجاح');
   });
 }
-
-function showInstallModal(){
-  document.getElementById('installModal').classList.add('show');
-}
-function hideInstallModal(){
-  document.getElementById('installModal').classList.remove('show');
-}
-function skipInstall(){
-  hideInstallModal();
-  // نذكّره مرة أخرى بعد 24 ساعة
-  try{localStorage.setItem('installSkip',Date.now());}catch(e){}
-}
+function showInstallModal(){document.getElementById('installModal').classList.add('show');}
+function hideInstallModal(){document.getElementById('installModal').classList.remove('show');}
+function skipInstall(){hideInstallModal();}
 document.getElementById('doInstallBtn').addEventListener('click',async()=>{
   if(!deferredPrompt){toast('افتح الصفحة من Chrome للتثبيت',true);return;}
   deferredPrompt.prompt();
-  const r=await deferredPrompt.userChoice;
-  if(r.outcome==='accepted') toast('جاري تثبيت التطبيق...');
-  deferredPrompt=null;
-  hideInstallModal();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null; hideInstallModal();
 });
 
-/* ══ التنقل بين الشاشات ══ */
+/* ══ شاشات ══ */
 const SCREENS=['S_role','S_mgrLogin','S_empLogin','S_mgr','S_emp'];
 function goScreen(id){
   SCREENS.forEach(s=>{
@@ -802,15 +607,9 @@ function goScreen(id){
   });
   const el=document.getElementById(id);
   if(!el) return;
-  if(id==='S_mgr'||id==='S_emp'){
-    el.style.display='flex';
-    el.style.flexDirection='column';
-  } else {
-    el.style.display='flex';
-    el.style.flexDirection='';
-  }
+  el.style.display='flex';
+  if(id==='S_mgr'||id==='S_emp') el.style.flexDirection='column';
 }
-
 function goRole(){goScreen('S_role');}
 document.getElementById('btnGoManager').addEventListener('click',()=>goScreen('S_mgrLogin'));
 document.getElementById('btnGoEmployee').addEventListener('click',()=>{
@@ -820,9 +619,7 @@ document.getElementById('btnGoEmployee').addEventListener('click',()=>{
 
 /* ══ دخول المدير ══ */
 function normDigits(s){
-  return String(s||'')
-    .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
-    .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();
+  return String(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim();
 }
 function doMgrLogin(){
   const p=normDigits(document.getElementById('mgrPass').value);
@@ -838,15 +635,13 @@ function logoutMgr(){
   goScreen('S_role');
   document.getElementById('mgrPass').value='';
   mails=[];firstLoad=true;knownIds=new Set();retryCount=0;
-  hideFBErr();
-  currentRole=null;
+  hideFBErr(); currentRole=null;
 }
 document.getElementById('mgrLoginBtn').addEventListener('click',doMgrLogin);
 document.getElementById('mgrPass').addEventListener('keydown',e=>{if(e.key==='Enter')doMgrLogin();});
 
 /* ══ دخول الموظف ══ */
 function doEmpLogin(){
-  empInfo={name:'موظف',dept:'إدارة التطعيمات'};
   currentRole='employee';
   goScreen('S_emp');
   if(!db) initFB();
@@ -855,8 +650,7 @@ function doEmpLogin(){
 function logoutEmp(){
   goScreen('S_role');
   attachedImg=null; attachedName='';
-  resetForm();
-  currentRole=null;
+  resetForm(); currentRole=null;
 }
 document.getElementById('empLoginBtn').addEventListener('click',doEmpLogin);
 
@@ -870,7 +664,7 @@ function empTab(t){
   if(!isForm) loadMyMails();
 }
 
-/* ══ صورة ══ */
+/* ══ صورة الموظف ══ */
 function trigCam(){document.getElementById('camInput').click();}
 function trigGal(){document.getElementById('galInput').click();}
 function handleImg(file){
@@ -884,20 +678,13 @@ function handleImg(file){
       const canvas=document.createElement('canvas');
       const MAX=1200;
       let w=img.width, h=img.height;
-      if(w>MAX||h>MAX){
-        if(w>h){h=Math.round(h*MAX/w);w=MAX;}
-        else{w=Math.round(w*MAX/h);h=MAX;}
-      }
+      if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
       canvas.width=w; canvas.height=h;
       const ctx=canvas.getContext('2d');
       ctx.drawImage(img,0,0,w,h);
-      // ضغط تدريجي حتى يصبح أقل من 700KB
       let quality=0.8;
       let result=canvas.toDataURL('image/jpeg',quality);
-      while(result.length>700*1024 && quality>0.2){
-        quality-=0.1;
-        result=canvas.toDataURL('image/jpeg',quality);
-      }
+      while(result.length>700*1024&&quality>0.2){quality-=0.1;result=canvas.toDataURL('image/jpeg',quality);}
       attachedImg=result; attachedName=file.name.replace(/\.[^.]+$/,'.jpg');
       document.getElementById('imgPrev').src=attachedImg;
       document.getElementById('imgPrevWrap').style.display='block';
@@ -921,7 +708,7 @@ function remImg(){
 document.getElementById('camInput').addEventListener('change',e=>handleImg(e.target.files[0]));
 document.getElementById('galInput').addEventListener('change',e=>handleImg(e.target.files[0]));
 
-/* ══ إرسال مراسلة ══ */
+/* ══ ✅ إرسال مراسلة — مع الأولوية ══ */
 async function submitMail(){
   const subj=document.getElementById('fSubj').value.trim();
   const ref=document.getElementById('fRef').value.trim();
@@ -936,6 +723,8 @@ async function submitMail(){
       type:document.getElementById('fType').value,
       subject:subj, ref, date, party,
       notes:document.getElementById('fNotes').value.trim(),
+      // ✅ حفظ الأولوية
+      priority:document.getElementById('fPriority').value,
       from:empInfo.name, dept:empInfo.dept,
       status:'new', archived:false,
       source:'employee-mobile',
@@ -943,7 +732,7 @@ async function submitMail(){
     };
     if(attachedImg) doc.img=attachedImg;
     await db.collection(COLL).add(doc);
-    document.getElementById('successOverlay').classList.add('show');
+    document.getElementById('successOverlay').style.display='flex';
     resetForm();
   }catch(e){toast('خطأ: '+(e.message||e.code),true);}
   btn.disabled=false; btn.textContent='📤 إرسال المراسلة';
@@ -951,51 +740,57 @@ async function submitMail(){
 function resetForm(){
   ['fSubj','fRef','fParty','fNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fType').value='in';
+  document.getElementById('fPriority').value='normal';
   document.getElementById('fDate').value=new Date().toISOString().split('T')[0];
   remImg();
 }
 function closeSuccess(){
-  document.getElementById('successOverlay').classList.remove('show');
+  document.getElementById('successOverlay').style.display='none';
   empTab('my');
 }
 
-/* ══ مراسلاتي ══ */
+/* ══ ✅ مراسلاتي — مع تعليق المدير ══ */
 async function loadMyMails(){
   if(!db) initFB();
   const el=document.getElementById('myList');
   el.className='loading'; el.textContent='جاري التحميل...';
   try{
-    // جلب كل المراسلات بدون orderBy لتجنب الحاجة لـ index
     const snap=await db.collection(COLL).get();
-    // فلترة وترتيب في JS
     let docs=snap.docs
       .map(d=>({id:d.id,...d.data()}))
       .filter(m=>m.source==='employee-mobile')
-      .sort((a,b)=>{
-        const ta=a.createdAt?.toMillis?.()||0;
-        const tb=b.createdAt?.toMillis?.()||0;
-        return tb-ta;
-      });
+      .sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
     if(!docs.length){el.className='empty';el.textContent='لا توجد مراسلات بعد';return;}
     el.className='';
     el.innerHTML=docs.map(m=>{
       const st=m.status||'new';
       const sc=st==='pending'?'b-pending':st==='done'?'b-done':'b-new';
       const sl=st==='pending'?'قيد المعالجة':st==='done'?'✓ منجز':'جديد';
-      return`<div class="my-card"><div class="my-body">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="badge b-type">${m.type==='out'?'صادر':'وارد'}</span>
-          <span class="badge ${sc}">${sl}</span>
+      const pr=m.priority==='urgent';
+      // ✅ عرض تعليق المدير إذا وجد
+      const commentHtml=m.managerComment?`
+        <div style="margin-top:10px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:12px;padding:10px">
+          <div style="font-size:11px;font-weight:800;color:#d8b4fe;margin-bottom:5px">💬 تعليق المدير:</div>
+          <div style="font-size:13px;color:#e9d5ff;line-height:1.7;white-space:pre-wrap">${esc(m.managerComment)}</div>
+        </div>`:'';
+      return`<div style="background:var(--card);border:1px solid rgba(34,197,94,.18);border-radius:20px;margin-bottom:10px;overflow:hidden">
+        <div style="padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <span class="badge b-type">${m.type==='out'?'صادر':'وارد'}</span>
+            <span class="badge ${sc}">${sl}</span>
+            <span class="badge ${pr?'b-urgent':'b-normal'}">${pr?'🔴 عاجل':'🟡 عادي'}</span>
+          </div>
+          <div style="font-size:15px;font-weight:800;margin:8px 0 6px">${esc(m.subject||'—')}</div>
+          <div style="font-size:12px;color:var(--mut);line-height:1.8">الرقم: ${esc(m.ref||'—')}<br>الجهة: ${esc(m.party||'—')}<br>التاريخ: ${esc(m.date||'—')}</div>
+          ${m.img?`<img style="width:100%;border-radius:12px;border:1px solid var(--line);margin-top:10px;display:block;cursor:pointer" src="${m.img}" alt="صورة" onclick="openViewer('${escA(m.img)}','${escA(m.subject||'صورة')}',false)"/>`:''}
+          ${commentHtml}
         </div>
-        <div class="my-subj">${esc(m.subject||'—')}</div>
-        <div class="my-meta">الرقم: ${esc(m.ref||'—')}<br>الجهة: ${esc(m.party||'—')}<br>التاريخ: ${esc(m.date||'—')}</div>
-        ${m.img?`<img class="my-img" src="${m.img}" alt="صورة" onclick="openViewer('${escA(m.img)}','${escA(m.subject||'صورة')}',false)"/>`:''}
-      </div></div>`;
+      </div>`;
     }).join('');
   }catch(e){el.className='empty';el.textContent='تعذر التحميل: '+(e.message||e.code);}
 }
 
-/* ══ Firebase Listener (مدير) ══ */
+/* ══ Firebase Listener ══ */
 function stopListen(){
   if(unsub){unsub();unsub=null;}
   if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
@@ -1008,7 +803,6 @@ function startListen(){
     unsub=db.collection(COLL).onSnapshot(
       snap=>{
         hideFBErr(); retryCount=0;
-        // ترتيب بـ JS لتجنب الحاجة لـ index
         const inc=snap.docs
           .map(d=>({id:d.id,...d.data()}))
           .sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
@@ -1025,15 +819,10 @@ function startListen(){
           setConn('ok','تم استلام تحديث جديد ✓');
           setTimeout(()=>setConn('ok','متصل'),3000);
           const m=nw[0];
-          const src=m.source==='employee-mobile'?'👤 موظف: ':'';
-          const notifBody=src+(m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||'');
-          // إشعار بصري في أعلى الشاشة
+          const notifBody=(m.subject||'مراسلة جديدة')+' — '+(m.party||m.from||'');
           showNewMailAlert('📬 وصل بريد جديد', notifBody);
-          // صوت
           playSound();
-          // إشعار النظام (إذا مفعّل)
           sendNotif('📬 وصل بريد جديد', notifBody, 'ncdc-'+m.id);
-          // اهتزاز
           try{navigator.vibrate&&navigator.vibrate([200,100,200,100,300]);}catch(e){}
         } else {
           setConn('ok','متصل — يعرض أي بريد جديد فوراً');
@@ -1083,13 +872,19 @@ function renderMails(){
   const el=document.getElementById('mailList');
   if(!arr.length){el.className='empty';el.textContent='لا توجد مراسلات مطابقة';return;}
   el.className='';
-  el.innerHTML=arr.map(m=>`
+  el.innerHTML=arr.map(m=>{
+    const pr=m.priority==='urgent';
+    // ✅ إظهار شارة التعليق إذا يوجد تعليق
+    const hasComment=!!m.managerComment;
+    return`
     <div class="mail-card">
       <div class="mc-body">
         <div class="mc-row">
           <span class="badge b-type">${m.type==='out'?'صادر':'وارد'}</span>
           ${bdg(getSt(m))}
+          <span class="badge ${pr?'b-urgent':'b-normal'}">${pr?'🔴 عاجل':'🟡 عادي'}</span>
           ${m.source==='employee-mobile'?'<span class="badge b-emp">👤 موظف</span>':''}
+          ${hasComment?'<span class="badge b-comment">💬 تعليق</span>':''}
         </div>
         <div class="mc-subj">${esc(m.subject||'بدون موضوع')}</div>
         <div class="mc-meta">الرقم: ${esc(m.ref||'—')}<br>الجهة: ${esc(m.party||m.from||'—')}<br>التاريخ: ${esc(m.date||'—')}${m.from?'<br>المُرسِل: '+esc(m.from)+(m.dept?' ('+esc(m.dept)+')':''):''}
@@ -1098,24 +893,30 @@ function renderMails(){
       <div class="mc-foot">
         <button class="view-btn" data-id="${escA(m.id)}">عرض المراسلة / تعديل الحالة</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-/* ══ تفاصيل المراسلة ══ */
+/* ══ ✅ تفاصيل المراسلة — مع التعليق والحذف ══ */
 function openDetail(id){
   const m=mails.find(x=>x.id===id);
   if(!m){toast('لم يتم العثور',true);return;}
   const st=getSt(m);
   const img=[m.img,m.imageUrl,m.image,m.photoUrl,m.scan,m.photo].find(x=>x)||'';
   const att=[m.att,m.attachmentUrl,m.pdfUrl,m.fileUrl,m.file,m.url,m.attachment,m.documentUrl].find(x=>x)||'';
+  const pr=m.priority==='urgent';
+  const existingComment=m.managerComment||'';
+
   document.getElementById('detailContent').innerHTML=`
     <div class="drow"><b>الموضوع</b><span>${esc(m.subject||'—')}</span></div>
     <div class="drow"><b>الرقم</b><span>${esc(m.ref||'—')}</span></div>
     <div class="drow"><b>التاريخ</b><span>${esc(m.date||'—')}</span></div>
     <div class="drow"><b>الجهة</b><span>${esc(m.party||m.from||'—')}</span></div>
     ${m.from?`<div class="drow"><b>المُرسِل</b><span>${esc(m.from)}${m.dept?' — '+esc(m.dept):''}</span></div>`:''}
+    <div class="drow"><b>الأولوية</b><span class="badge ${pr?'b-urgent':'b-normal'}">${pr?'🔴 عاجل':'🟡 عادي'}</span></div>
     <div class="drow"><b>الحالة الحالية</b><span id="curStBdg">${bdg(st)}</span></div>
     ${m.notes?`<div class="drow"><b>ملاحظات</b><span>${esc(m.notes)}</span></div>`:''}
+
     <div class="status-box">
       <label>تعديل الحالة</label>
       <select class="modal-sel" id="stSel" data-id="${escA(id)}">
@@ -1125,6 +926,16 @@ function openDetail(id){
         <option value="archive" ${st==='archive'?'selected':''}>الأرشيف</option>
       </select>
     </div>
+
+    <!-- ✅ صندوق التهميشة / التعليق -->
+    <div class="comment-box">
+      <div class="comment-box-label"><span>💬</span> تهميشة المدير (تعليق على المراسلة)</div>
+      <textarea class="comment-textarea" id="managerCommentInput" placeholder="اكتب تعليقك أو ملاحظتك على هذه المراسلة... سيظهر للموظف في تطبيقه">${existingComment}</textarea>
+      <button class="comment-save-btn" onclick="saveComment('${escA(id)}')">
+        💾 حفظ التعليق
+      </button>
+    </div>
+
     <div class="modal-acts">
       ${att?`<button class="view-btn" onclick="openViewer('${escA(att)}','${escA(m.ref||'ملف')}',true)">📄 فتح الملف</button>`
            :'<button class="view-btn dis">لا يوجد ملف</button>'}
@@ -1133,7 +944,13 @@ function openDetail(id){
     </div>
     ${img?`<div class="img-preview-m" onclick="openViewer('${escA(img)}','${escA(m.subject||'صورة')}',false)">
       <img src="${img}" alt="صورة" onerror="this.parentElement.style.display='none'"/>
-      <p>اضغط لتكبير الصورة 🔍</p></div>`:''}`;
+      <p>اضغط لتكبير الصورة 🔍</p></div>`:''}
+
+    <!-- ✅ زر الحذف -->
+    <button class="del-btn-full" onclick="askDelete('${escA(id)}')">
+      🗑️ حذف المراسلة نهائياً
+    </button>`;
+
   document.getElementById('detailModal').classList.add('show');
 }
 function closeDetail(){document.getElementById('detailModal').classList.remove('show');}
@@ -1151,6 +968,44 @@ async function changeSt(id,val){
   }catch(e){toast('خطأ: '+(e.code||e.message),true);}
 }
 
+/* ══ ✅ حفظ تعليق المدير (التهميشة) ══ */
+async function saveComment(id){
+  const txt=document.getElementById('managerCommentInput')?.value?.trim();
+  if(txt===undefined){toast('تعذر العثور على حقل التعليق',true);return;}
+  try{
+    await db.collection(COLL).doc(id).set(
+      {managerComment: txt, commentUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},
+      {merge:true}
+    );
+    toast(txt?'✓ تم حفظ التعليق':'✓ تم مسح التعليق');
+    // تحديث محلي
+    const m=mails.find(x=>x.id===id);
+    if(m) m.managerComment=txt;
+  }catch(e){toast('خطأ في حفظ التعليق: '+(e.code||e.message),true);}
+}
+
+/* ══ ✅ حذف المراسلة ══ */
+function askDelete(id){
+  pendingDeleteId=id;
+  document.getElementById('confirmDelete').classList.add('show');
+}
+function closeConfirm(){
+  document.getElementById('confirmDelete').classList.remove('show');
+  pendingDeleteId=null;
+}
+document.getElementById('confirmYesBtn').addEventListener('click',async()=>{
+  if(!pendingDeleteId) return;
+  const id=pendingDeleteId;
+  closeConfirm();
+  closeDetail();
+  try{
+    await db.collection(COLL).doc(id).delete();
+    mails=mails.filter(x=>x.id!==id);
+    renderMails();
+    toast('✓ تم حذف المراسلة');
+  }catch(e){toast('خطأ في الحذف: '+(e.code||e.message),true);}
+});
+
 /* ══ الإشعارات ══ */
 async function reqNotif(){
   if(!('Notification' in window)){toast('المتصفح لا يدعم الإشعارات',true);return;}
@@ -1158,7 +1013,7 @@ async function reqNotif(){
   if(p==='granted'){
     toast('✓ تم تفعيل الإشعارات');
     document.getElementById('notifBanner').classList.remove('show');
-    sendNotif('NCDC مدير ✓','ستصلك إشعارات عند وصول بريد جديد أو تحديث من موظف');
+    sendNotif('NCDC مدير ✓','ستصلك إشعارات عند وصول بريد جديد');
   } else {
     toast('لم يتم السماح — تحقق من إعدادات المتصفح',true);
   }
@@ -1195,21 +1050,15 @@ function hideFBErr(){document.getElementById('fbErrBanner')?.classList.remove('s
 /* ══ صوت ══ */
 let _audioCtx=null;
 function getAudioCtx(){
-  if(!_audioCtx){
-    try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
-  }
+  if(!_audioCtx){try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
   return _audioCtx;
 }
-// افتح AudioContext عند أول لمسة/ضغط حتى يعمل الصوت لاحقاً تلقائياً
 document.addEventListener('touchstart',()=>getAudioCtx(),{once:true,passive:true});
 document.addEventListener('click',()=>getAudioCtx(),{once:true,passive:true});
-
 function playSound(){
   try{
-    const ctx=getAudioCtx();
-    if(!ctx) return;
-    // استيقظ ctx إذا كان مجمداً
-    if(ctx.state==='suspended') ctx.resume();
+    const ctx=getAudioCtx();if(!ctx)return;
+    if(ctx.state==='suspended')ctx.resume();
     function b(f,s,d,v=0.5){
       const o=ctx.createOscillator(),g=ctx.createGain();
       o.connect(g);g.connect(ctx.destination);
@@ -1217,21 +1066,13 @@ function playSound(){
       g.gain.setValueAtTime(0,ctx.currentTime+s);
       g.gain.linearRampToValueAtTime(v,ctx.currentTime+s+0.01);
       g.gain.linearRampToValueAtTime(0,ctx.currentTime+s+d);
-      o.start(ctx.currentTime+s);
-      o.stop(ctx.currentTime+s+d+0.1);
+      o.start(ctx.currentTime+s);o.stop(ctx.currentTime+s+d+0.1);
     }
-    b(520,0.0,0.15,0.6);
-    b(660,0.18,0.15,0.6);
-    b(800,0.36,0.25,0.7);
-  }catch(e){console.warn('sound error',e);}
-}
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('message',e=>{
-    if(e.data?.type==='PLAY_SOUND') playSound();
-  });
+    b(520,0.0,0.15,0.6);b(660,0.18,0.15,0.6);b(800,0.36,0.25,0.7);
+  }catch(e){}
 }
 
-/* ══ إشعار بريد جديد (بصري) ══ */
+/* ══ إشعار بصري ══ */
 let nmaTimer=null;
 function showNewMailAlert(title,sub){
   const el=document.getElementById('newMailAlert');
@@ -1263,8 +1104,7 @@ function openViewer(src,name,isPDF){
         body.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:30px;text-align:center">
           <div style="font-size:48px">📄</div>
           <div style="font-size:15px;color:#f8fafc;font-weight:700">${name||'ملف PDF'}</div>
-          <button onclick="window.open('${burl}','_blank')" style="background:#3b82f6;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">📂 فتح PDF</button>
-        </div>`;
+          <button onclick="window.open('${burl}','_blank')" style="background:#3b82f6;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;font-family:Tajawal,sans-serif">📂 فتح PDF</button></div>`;
       }catch(e){body.innerHTML='<div style="color:#fca5a5;padding:40px;text-align:center">تعذر قراءة PDF</div>';}
     } else {
       body.innerHTML=`<iframe src="https://docs.google.com/viewer?url=${encodeURIComponent(src)}&embedded=true" style="width:100%;height:85vh;border:none;border-radius:8px;background:#525659"></iframe>`;
@@ -1291,7 +1131,7 @@ function dlCurrent(){
     try{
       const mime=viewerSrc.split(';')[0].split(':')[1],b64=viewerSrc.split(',')[1];
       const bin=atob(b64),arr=new Uint8Array(bin.length);
-      for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+      for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
       const blob=new Blob([arr],{type:mime}),url=URL.createObjectURL(blob);
       const a=document.createElement('a');a.href=url;a.download=viewerName;a.click();
       setTimeout(()=>URL.revokeObjectURL(url),3000);
@@ -1314,13 +1154,10 @@ function toast(msg,bad=false){
 
 /* ══ الأحداث ══ */
 document.addEventListener('click',e=>{
-  // زر عرض المراسلة
   const vb=e.target.closest('.view-btn[data-id]');
   if(vb){openDetail(vb.dataset.id);return;}
-  // تبويبات المدير
   const tf=e.target.closest('[data-f]');
   if(tf&&currentRole==='manager'){setFilt(tf.dataset.f);return;}
-  // إغلاق modal بالنقر خارجه
   if(e.target.id==='detailModal') closeDetail();
   if(e.target.id==='imgViewer') closeViewer();
 });
@@ -1333,13 +1170,12 @@ document.getElementById('refreshBtn').addEventListener('click',doRefresh);
 document.getElementById('retryBtn').addEventListener('click',()=>{retryCount=0;hideFBErr();startListen();});
 document.getElementById('srchQ').addEventListener('input',e=>{srch=e.target.value;renderMails();});
 document.getElementById('detailModal').addEventListener('click',e=>{if(e.target===document.getElementById('detailModal'))closeDetail();});
-document.getElementById('ivHead').querySelector('.vbtn-close').addEventListener('click',closeViewer);
-document.getElementById('ivHead').querySelector('.vbtn-dl').addEventListener('click',dlCurrent);
 
 /* ══ تشغيل ══ */
 initFB();
 regSW();
 setupInstall();
+goScreen('S_role');
 </script>
 </body>
 </html>
